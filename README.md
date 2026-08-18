@@ -84,3 +84,18 @@ hexo clean && hexo generate && hexo deploy
 - `navbar`：导航菜单
 - `code_highlight`：代码高亮风格（支持 90+ 种 highlight.js 主题）
 - 评论 / 搜索 / 统计等插件
+
+## 文章内示意图：Mermaid
+
+文章里可以用文本直接写流程图/时序图等示意图（可随时编辑），用法：
+
+````markdown
+{% mermaid %}
+flowchart TD
+    A[输入] --> B{是否合法?}
+    B -- 是 --> C[处理]
+    B -- 否 --> D[报错]
+{% endmermaid %}
+````
+
+语法参考 [Mermaid 官方文档](https://mermaid.js.org/)（flowchart / sequenceDiagram / pie / gantt 等）。只有包含 Mermaid 的页面才会加载渲染脚本；文章图片也支持点击放大（Icarus 自带 lightGallery，`plugins.gallery` 已开启）。
