@@ -26,7 +26,7 @@ jobs:
         run: npm ci
 
       - name: Generate site
-        run: npx hexo generate
+        run: npx hexo clean && npx hexo generate
 
       - name: Deploy to main branch (GitHub Pages)
         uses: peaceiris/actions-gh-pages@v4

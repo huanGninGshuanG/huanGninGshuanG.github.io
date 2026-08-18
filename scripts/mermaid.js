@@ -13,6 +13,10 @@
  * 原理：文章里出现 {% mermaid %} 时，构建阶段把它输出为
  * <pre class="mermaid"> 代码块；页面加载时通过 CDN 引入 mermaid.js
  * 并渲染成矢量图（SVG）。只有包含 Mermaid 的页面才会加载脚本。
+ *
+ * ⚠️ 注意：Mermaid 代码里不要使用 {{ }}（如六边形节点 R{{...}}），
+ * hexo 的模板引擎会把 {{ }} 当作变量插值吃掉导致语法错误；
+ * 请改用 R(...)、R[...] 等其他节点形状。
  */
 
 const MERMAID_CDN = 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js';

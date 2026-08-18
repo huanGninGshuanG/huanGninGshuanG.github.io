@@ -114,7 +114,7 @@ flowchart LR
         T5["Token 5"]
         T6["Token 6"]
     end
-    R{{"门控网络 Router · top-k"}}
+    R(["门控网络 Router · top-k"])
     subgraph EXP["EP 组：8 张卡（每卡承载一个专家）"]
         E1["GPU1 · E1"]
         E2["GPU2 · E2"]
