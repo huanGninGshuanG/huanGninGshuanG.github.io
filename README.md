@@ -85,6 +85,29 @@ hexo clean && hexo generate && hexo deploy
 - `code_highlight`：代码高亮风格（支持 90+ 种 highlight.js 主题）
 - 评论 / 搜索 / 统计等插件
 
+## 文章内链接到其他文章
+
+用 Hexo 内置标签，**按文件名（slug）引用**（不要用标题，标题含空格/特殊字符会导致标签解析失败）：
+
+```markdown
+<!-- 只输出链接地址，配合 Markdown 自定义文字 -->
+[并行策略详解]({% post_path llm-parallelism-dp-tp-pp-ep %})
+
+<!-- 直接生成链接，文字默认为文章标题（鼠标悬停显示完整标题） -->
+{% post_link llm-parallelism-dp-tp-pp-ep %}
+
+<!-- 自定义链接文字 -->
+{% post_link llm-parallelism-dp-tp-pp-ep 点击查看并行策略详解 %}
+
+<!-- 跳转到文章内的锚点 -->
+{% post_link llm-parallelism-dp-tp-pp-ep#组合方式 %}
+```
+
+两点提醒：
+
+- `post_link` 找不到文章时**构建会直接报错**，能及时发现链接写错；
+- 别用写死路径 `[文字](/2026/08/18/...)`，一旦改 permalink 格式链接就失效。
+
 ## 文章内示意图：Mermaid
 
 文章里可以用文本直接写流程图/时序图等示意图（可随时编辑），用法：
