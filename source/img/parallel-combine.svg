@@ -129,5 +129,5 @@
   <text x="500" y="275" font-size="12.5" fill="#333">DP 数据并行：上下两行各持有一份完整模型副本，分别处理不同 batch，</text>
   <text x="500" y="292" font-size="12.5" fill="#333">每步训练结束后 AllReduce 同步梯度（通信量 ≈ 模型大小）。</text>
 
-  <text x="470" y="326" font-size="12.5" fill="#b3541e">★ 若模型含 MoE 专家层：专家再按 EP 切分（见第二张示意图），EP 可与 TP / PP / DP 叠加。</text>
+  <text x="470" y="326" font-size="12.5" fill="#b3541e">★ 若模型含 MoE 专家层：专家再按 EP 切分（见文中 Mermaid 示意图），EP 可与 TP / PP / DP 叠加。</text>
 </svg>

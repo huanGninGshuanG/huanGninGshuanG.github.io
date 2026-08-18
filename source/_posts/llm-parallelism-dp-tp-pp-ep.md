@@ -66,7 +66,7 @@ Attention 的 QKV 投影按列切、输出投影按行切，同理。切分边�
 
 ## 四、EP：专家并行
 
-**思路**：专门针对 **MoE（Mixture-of-Experts）** 模型。MoE 把 FFN 层替换成多个「专家」（expert），每个 token 由**门控网络（Router）**挑选 top-k 个专家来计算。EP 就是把众多专家**分布到不同的 GPU** 上，每个专家只处理被路由给它的 token（见下方图 2）。
+**思路**：专门针对 **MoE（Mixture-of-Experts）** 模型。MoE 把 FFN 层替换成多个「专家」（expert），每个 token 由**门控网络（Router）**挑选 top-k 个专家来计算。EP 就是把众多专家**分布到不同的 GPU** 上，每个专家只处理被路由给它的 token（示意图见下文）。
 
 **特点**：
 
@@ -102,9 +102,48 @@ Attention 的 QKV 投影按列切、输出投影按行切，同理。切分边�
 
 ### MoE 模型：叠加 EP
 
-对于 MoE 模型，每个 stage 里的专家层再按 **EP** 切分：
+对于 MoE 模型，每个 stage 里的专家层再按 **EP** 切分（Mermaid 示意图）：
 
-![MoE 专家并行示意](/img/expert-parallel.svg)
+{% mermaid %}
+flowchart LR
+    subgraph TOK["输入 Token"]
+        T1["Token 1"]
+        T2["Token 2"]
+        T3["Token 3"]
+        T4["Token 4"]
+        T5["Token 5"]
+        T6["Token 6"]
+    end
+    R{{"门控网络 Router · top-k"}}
+    subgraph EXP["EP 组：8 张卡（每卡承载一个专家）"]
+        E1["GPU1 · E1"]
+        E2["GPU2 · E2"]
+        E3["GPU3 · E3"]
+        E4["GPU4 · E4"]
+        E5["GPU5 · E5"]
+        E6["GPU6 · E6"]
+        E7["GPU7 · E7"]
+        E8["GPU8 · E8"]
+    end
+    T1 --> R
+    T2 --> R
+    T3 --> R
+    T4 --> R
+    T5 --> R
+    T6 --> R
+    R --> E1
+    R --> E2
+    R --> E3
+    R --> E4
+    R --> E5
+    R --> E6
+    R --> E7
+    R --> E8
+    linkStyle 0,1,2,3,4,5 stroke:#8a8a8a,stroke-width:1.5
+    linkStyle 6,7,8,9,10,11,12,13 stroke:#4a7fb5,stroke-width:2
+{% endmermaid %}
+
+图中每个 Token 先经门控网络挑选 top-k 个专家（示意 k 覆盖全部专家，实际通常 k=1~8），再被路由到对应专家所在的卡计算；专家层通信为 All-to-All 的 token 交换。
 
 以 DeepSeek-V3 / Mixtral 这类模型为例，常见组合为 **TP × PP × EP × DP**：节点内先做 TP（张量并行）再叠 EP（专家并行），节点间用 PP 串流水线，最外层 DP 复制多份。EP 与 DP 的区别要分清：DP 的每个副本都有**完整模型**；EP 则是每张卡只有**部分专家**。
 
