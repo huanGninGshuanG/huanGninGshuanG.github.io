@@ -65,7 +65,7 @@ FFN 的基本结构如下图，其基本计算为 down_proj(SwiGlu(gate(X)) · u
 
 在工程实现中，SwiGlu(gate(X)) · up_proj(X) 可以合并为 **SiluAndMul 算子**：
 
-1. 把 gate 与 up_proj 两个权重矩阵合并为一个矩阵 W [dim, 2*intermediate]；
+1. 把 gate 与 up_proj 两个权重矩阵合并为一个矩阵 W [dim, 2×intermediate]；
 2. 一次矩阵乘 X @ W 即可同时算出两个部分的结果；
 3. 对前一半列应用激活函数，再与后一半列**按位乘**。
 
@@ -77,8 +77,8 @@ FFN 的基本结构如下图，其基本计算为 down_proj(SwiGlu(gate(X)) · u
 
 **方式一：行并行切分 gate / up_proj**
 
-- **GPU0**：拿 gate、up_proj 的**前一半行**权重，拼接为 W1 [dim/2, 2*intermediate]；输入为匹配做**列切分**，取前一半列 X1 [bs, seq_len, dim/2]，计算 X1 @ W1 → [bs, seq_len, 2*intermediate]。
-- **GPU1**：拿**后一半行**权重，拼接为 W2 [dim/2, 2*intermediate]；取输入后一半列 X2 [bs, seq_len, dim/2]，计算 X2 @ W2 → [bs, seq_len, 2*intermediate]。
+- **GPU0**：拿 gate、up_proj 的**前一半行**权重，拼接为 W1 [dim/2, 2×intermediate]；输入为匹配做**列切分**，取前一半列 X1 [bs, seq_len, dim/2]，计算 X1 @ W1 → [bs, seq_len, 2×intermediate]。
+- **GPU1**：拿**后一半行**权重，拼接为 W2 [dim/2, 2×intermediate]；取输入后一半列 X2 [bs, seq_len, dim/2]，计算 X2 @ W2 → [bs, seq_len, 2×intermediate]。
 - 两部分 **all-reduce 相加**后才是最终结果。⚠️ 不能直接使用 SiluAndMul(W1, X1)：SwiGlu 不是线性函数，SwiGlu(X1@gate1 + X2@gate2) ≠ SwiGlu(X1@gate1) + SwiGlu(X2@gate2)，因此**行并行切分会额外引入一次通信**，最终结果再送入 down_proj。
 
 **方式二：列切分 gate / up_proj**
@@ -124,7 +124,53 @@ res = out_proj1(context)
 
 ## 四、EP：专家并行
 
-**思路**：专门针对 **MoE（Mixture-of-Experts）** 模型。MoE 把 FFN 层替换成多个「专家」（expert），每个 token 由**门控网络（Router）**挑选 top-k 个专家来计算。EP 就是把众多专家**分布到不同的 GPU** 上，每个专家只处理被路由给它的 token（示意图见下文）。一个使用pytorch实现的简单MOE代码如下：
+**思路**：专门针对 **MoE（Mixture-of-Experts）** 模型。MoE 把 FFN 层替换成多个「专家」（expert），每个 token 由**门控网络（Router）**挑选 top-k 个专家来计算。EP 就是把众多专家**分布到不同的 GPU** 上，每个专家只处理被路由给它的 token。一个使用pytorch实现的简单MOE代码如下：
+```python
+# x: (batch, seq_len, emb_dim)
+scores = self.gate(x)  # (b, seq_len, num_experts)
+topk_scores, topk_indices = torch.topk(scores, self.num_experts_per_tok, dim=-1)
+topk_probs = torch.softmax(topk_scores, dim=-1)
+
+batch, seq_len, _ = x.shape
+x_flat = x.reshape(batch * seq_len, -1)
+out_flat = torch.zeros(batch * seq_len, self.emb_dim, device=x.device, dtype=x.dtype)
+
+topk_indices_flat = topk_indices.reshape(-1, self.num_experts_per_tok)
+topk_probs_flat = topk_probs.reshape(-1, self.num_experts_per_tok)
+
+unique_experts = torch.unique(topk_indices_flat)
+
+# 整体思路是一次性处理整个batch关于这个expert的输入
+for expert_id_tensor in unique_experts:
+    expert_id = int(expert_id_tensor.item())
+
+    mask = topk_indices_flat == expert_id
+    if not mask.any():
+        continue
+
+    token_mask = mask.any(dim=-1)
+    selected_idx = token_mask.nonzero(as_tuple=False).squeeze(-1)
+    if selected_idx.numel() == 0:
+        continue
+
+    # extract the token row, if this row use expert with expert_id
+    expert_input = x_flat.index_select(0, selected_idx)
+    # self.fc1 worked as gate
+    hidden = torch.nn.functional.silu(self.fc1[expert_id](expert_input)) * self.fc2[
+        expert_id
+    ](expert_input)
+    expert_out = self.fc3[expert_id](hidden)
+
+    mask_selected = mask[selected_idx]
+    slot_indices = mask_selected.int().argmax(dim=-1, keepdim=True)
+    # choose the weight of this expert for each selected token
+    selected_probs = torch.gather(
+        topk_probs_flat.index_select(0, selected_idx), dim=-1, index=slot_indices
+    ).squeeze(-1)
+
+    # weighted sum
+    out_flat.index_add_(0, selected_idx, expert_out * selected_probs.unsqueeze(-1))
+```
 
 
 **特点**：
