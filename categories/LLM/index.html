@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="robots" content="noindex"><meta><title>分类: LLM - 我的博客</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="我的博客"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="我的博客"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="一个使用 Hexo 与 Icarus 主题搭建的个人博客"><meta property="og:type" content="blog"><meta property="og:title" content="我的博客"><meta property="og:url" content="https://huangningshuang.github.io/"><meta property="og:site_name" content="我的博客"><meta property="og:description" content="一个使用 Hexo 与 Icarus 主题搭建的个人博客"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://huangningshuang.github.io/img/og_image.png"><meta property="article:author" content="Ningshuang Huang"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://huangningshuang.github.io/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://huanGninGshuanG.github.io"},"headline":"我的博客","image":["https://huangningshuang.github.io/img/og_image.png"],"author":{"@type":"Person","name":"Ningshuang Huang"},"publisher":{"@type":"Organization","name":"我的博客","logo":{"@type":"ImageObject","url":"https://huangningshuang.github.io/img/logo.svg"}},"description":"一个使用 Hexo 与 Icarus 主题搭建的个人博客"}</script><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link data-pjax rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link data-pjax rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="我的博客" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-content"><nav class="breadcrumb" aria-label="breadcrumbs"><ul><li><a href="/categories/">分类</a></li><li class="is-active"><a href="#" aria-current="page">LLM</a></li></ul></nav></div></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2026-08-18T22:44:00.000Z" title="8/18/2026, 10:44:00 PM">2026-08-18</time>发表</span><span class="level-item"><time dateTime="2026-08-18T22:44:00.000Z" title="8/18/2026, 10:44:00 PM">2026-08-18</time>更新</span><span class="level-item"><a class="link-muted" href="/categories/LLM/">LLM</a></span><span class="level-item">20 分钟读完 (大约3005个字)</span></div></div><p class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2026/08/18/llm-parallelism-dp-tp-pp-ep/">大模型推理中常见的并行策略</a></p><div class="content"><p>主流大模型的参数基本上都几百B，甚至Kimi K3达到了2.8T，单张 GPU 既放不下参数，也算不动。于是需要把「模型」和「数据」拆开，分到成百上千张 GPU 上协同计算 —— 这就是<strong>分布式并行</strong>。围绕「切什么、怎么通信」，大致上有四种基本并行策略，常见的推理框架还会有CP(context parallel)等切分方式。</p>
+<table>
+<thead>
+<tr>
+<th>缩写</th>
+<th>全称</th>
+<th>如何切分</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>DP</strong></td>
+<td>Data Parallelism，数据并行</td>
+<td>按照BATCH切分给多个副本</td>
+</tr>
+<tr>
+<td><strong>TP</strong></td>
+<td>Tensor Parallelism，张量并行</td>
+<td>权重切分给TP组内的多个GPU</td>
+</tr>
+<tr>
+<td><strong>PP</strong></td>
+<td>Pipeline Parallelism，流水线并行</td>
+<td>多个layer按层切分给不同GPU</td>
+</tr>
+<tr>
+<td><strong>EP</strong></td>
+<td>Expert Parallelism，专家并行</td>
+<td>MoE 中按照专家维度切分到多个GPU</td>
+</tr>
+</tbody></table>
+<p>下面逐个介绍，最后给出它们的组合方式与示意图。</p>
+<h2 id="预备：常见通信原语"><a href="#预备：常见通信原语" class="headerlink" title="预备：常见通信原语"></a>预备：常见通信原语</h2><p>分布式训练 &#x2F; 推理中，数据需要在多个 GPU 之间按固定的<strong>集合通信（Collective Communication）</strong>模式交换。下面四个是基础原语，后续各并行策略都会用到（P 为参与通信的 GPU 数，V 为每张卡的数据量）。</p>
+<p><strong>1. Reduce-Scatter（归约-分散）</strong></p>
+<ul>
+<li>每张卡把自己的数据分成 P 份，把第 i 份发送给第 i 张卡；同时接收其他卡发来的对应份，做<strong>逐元素归约</strong>（通常为求和，也可为求最大 &#x2F; 最小）。</li>
+<li>结束时：每张卡持有<strong>其中一份数据的全局归约结果</strong>（含本地份额）。</li>
+<li>通信量约 (P−1)&#x2F;P × 全体数据量，环形（Ring）实现下与 GPU 数弱相关。</li>
+<li>典型用途：Ring AllReduce 的前半段、ZeRO 的梯度分片。</li>
+</ul>
+<p><strong>2. All-Gather（全收集）</strong></p>
+<ul>
+<li>Reduce-Scatter 的<strong>逆操作</strong>：每张卡把自己持有的数据分片发给所有卡，最终<strong>每张卡都拥有完整数据</strong>（全体分片拼接，共 P·V）。</li>
+<li>典型用途：TP 行并行 &#x2F; 列并行的结果拼接、ZeRO 的权重恢复。</li>
+</ul>
+<p><strong>3. All-Reduce（全归约）</strong></p>
+<ul>
+<li>每张卡都得到<strong>全体数据的归约结果</strong>（如所有卡对应元素求和）。</li>
+<li>标准实现 &#x3D; Reduce-Scatter + All-Gather 两步（Ring AllReduce 正是这个结构），通信量约为 Reduce-Scatter 的两倍。</li>
+<li>典型用途：DP 的梯度同步、TP 计算结果的合并。</li>
+</ul>
+<p><strong>4. All-to-All（全交换）</strong></p>
+<ul>
+<li>比前三个更通用：每张卡向<strong>其他每一张卡</strong>发送互不相同的数据，同时接收来自各卡的数据。</li>
+<li>典型用途：MoE 的 token 路由（EP 通信）、序列并行、部分 Attention 实现。</li>
+</ul>
+<p>四个原语的对比小结：</p>
+<table>
+<thead>
+<tr>
+<th>原语</th>
+<th>输入（每卡）</th>
+<th>输出（每卡）</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>reduce-scatter</td>
+<td>数据 V</td>
+<td>其中 1 份的全局归约结果</td>
+<td>Ring AllReduce 前半段、ZeRO 分片</td>
+</tr>
+<tr>
+<td>all-gather</td>
+<td>数据分片 V&#x2F;P</td>
+<td>完整数据 P·V</td>
+<td>TP 结果拼接、ZeRO 恢复</td>
+</tr>
+<tr>
+<td>all-reduce</td>
+<td>数据 V</td>
+<td>全体数据的归约结果</td>
+<td>DP 梯度同步、TP 合并</td>
+</tr>
+<tr>
+<td>all-to-all</td>
+<td>发给各卡的不同数据</td>
+<td>各卡发来的数据</td>
+<td>MoE token 路由、序列并行</td>
+</tr>
+</tbody></table>
+<h2 id="一、DP：数据并行"><a href="#一、DP：数据并行" class="headerlink" title="一、DP：数据并行"></a>一、DP：数据并行</h2><p><strong>思路</strong>：每张卡（或每个DP组）持有一份<strong>完整的模型副本</strong>，把输入数据按 batch 维度切成 N 份分给 N 个副本，各副本独立完成前向计算。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>实现最简单，扩展性最好，可以横向扩展吞吐量。</li>
+<li><strong>不降低单卡显存</strong>：每张卡仍要放下完整模型，所以显存不够时不能只靠 DP。</li>
+</ul>
+<h2 id="二、TP：张量并行"><a href="#二、TP：张量并行" class="headerlink" title="二、TP：张量并行"></a>二、TP：张量并行</h2><p><strong>思路</strong>：把权重切分到多个 GPU 上，每个 GPU 只跑该算子的<strong>部分计算</strong>，计算完成后通过通信合并多个 GPU 的结果。张量并行分为两种：<strong>行并行</strong>与<strong>列并行</strong>。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>行并行</th>
+<th>列并行</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>切分方式</td>
+<td>权重 Y <strong>按列</strong>拆分为 [Y1, Y2]</td>
+<td>权重 Y <strong>按行</strong>拆分为 [Y1; Y2]</td>
+</tr>
+<tr>
+<td>计算</td>
+<td>两个设备分别计算 X@Y1、X@Y2</td>
+<td>两个设备分别进行计算</td>
+</tr>
+<tr>
+<td>通信合并</td>
+<td><strong>all-gather 拼接</strong>两个结果矩阵</td>
+<td><strong>all-reduce 求和</strong></td>
+</tr>
+<tr>
+<td>最终结果</td>
+<td>按列拼接成完整结果</td>
+<td>对应元素相加得到完整结果</td>
+</tr>
+</tbody></table>
+<p>大模型中有三类核心模块 Attention、FFN 和 embedding &#x2F; lm-head，下面以 VLLM 中的实现简单介绍这两个模块如何进行切分与计算。</p>
+<h3 id="1-FFN-的-TP-切分"><a href="#1-FFN-的-TP-切分" class="headerlink" title="1. FFN 的 TP 切分"></a>1. FFN 的 TP 切分</h3><p>FFN 的基本结构如下图，其基本计算为 down_proj(SwiGlu(gate(X)) · up_proj(X))，各组成部分含义如下：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>含义</th>
+<th>维度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>X</td>
+<td>Attention 的输出</td>
+<td>[bs, seq_len, dim]</td>
+</tr>
+<tr>
+<td>gate</td>
+<td>门控的 dense 权重</td>
+<td>[dim, intermediate]</td>
+</tr>
+<tr>
+<td>SwiGlu</td>
+<td>激活函数，缩放 up_proj 提取的特征</td>
+<td>函数，对输入矩阵逐一运算</td>
+</tr>
+<tr>
+<td>up_proj</td>
+<td>提取输入特征</td>
+<td>[dim, intermediate]</td>
+</tr>
+<tr>
+<td>down_proj</td>
+<td>保持 FFN 输出维度与输入一致</td>
+<td>[intermediate, dim]</td>
+</tr>
+</tbody></table>
+<p>在工程实现中，SwiGlu(gate(X)) · up_proj(X) 可以合并为 <strong>SiluAndMul 算子</strong>：</p>
+<ol>
+<li>把 gate 与 up_proj 两个权重矩阵合并为一个矩阵 W [dim, 2×intermediate]；</li>
+<li>一次矩阵乘 X @ W 即可同时算出两个部分的结果；</li>
+<li>对前一半列应用激活函数，再与后一半列<strong>按位乘</strong>。</li>
+</ol>
+<p>最终流程简化为 down_proj(SiluAndMul(W, X))。</p>
+<p>假设有两块 GPU，下面分别看<strong>行并行切分</strong>与<strong>列切分</strong>两种方式。</p>
+<p><strong>方式一：行并行切分 gate &#x2F; up_proj</strong></p>
+<ul>
+<li><strong>GPU0</strong>：拿 gate、up_proj 的<strong>前一半行</strong>权重，拼接为 W1 [dim&#x2F;2, 2×intermediate]；输入为匹配做<strong>列切分</strong>，取前一半列 X1 [bs, seq_len, dim&#x2F;2]，计算 X1 @ W1 → [bs, seq_len, 2×intermediate]。</li>
+<li><strong>GPU1</strong>：拿<strong>后一半行</strong>权重，拼接为 W2 [dim&#x2F;2, 2×intermediate]；取输入后一半列 X2 [bs, seq_len, dim&#x2F;2]，计算 X2 @ W2 → [bs, seq_len, 2×intermediate]。</li>
+<li>两部分 <strong>all-reduce 相加</strong>后才是最终结果。⚠️ 不能直接使用 SiluAndMul(W1, X1)：SwiGlu 不是线性函数，SwiGlu(X1@gate1 + X2@gate2) ≠ SwiGlu(X1@gate1) + SwiGlu(X2@gate2)，因此<strong>行并行切分会额外引入一次通信</strong>，最终结果再送入 down_proj。</li>
+</ul>
+<p><strong>方式二：列切分 gate &#x2F; up_proj</strong></p>
+<ul>
+<li><strong>GPU0</strong>：拿 gate、up_proj 的<strong>前一半列</strong> [dim, intermediate&#x2F;2]，拼接出 W1 [dim, intermediate]，X 直接复制到该 GPU 上。因为列切分的结果无需相加、只需在对应维度拼接，可以直接使用 SiluAndMul(W1, X)。</li>
+<li><strong>GPU1</strong>：同理。</li>
+<li>得到两部分结果 A1、A2 后，对 down_proj 做<strong>行切分</strong>，两个 GPU 内分别对 A1、A2 做矩阵乘，最后结果再引入一次 <strong>all-reduce 相加</strong>。</li>
+<li>结论：列切分在送入 down_proj 前<strong>无需额外引入通信</strong>，效率更高。</li>
+</ul>
+<h3 id="2-MHA-的-TP-切分"><a href="#2-MHA-的-TP-切分" class="headerlink" title="2. MHA 的 TP 切分"></a>2. MHA 的 TP 切分</h3><p>MHA 的输入维度是 [bs, seq_len, #head, head_dim]，每个 head 独立计算 qkv，因此天然可以在 <strong>head 维度</strong>拆分：不同设备计算不同的 head。计算完每个 head 的 attention score 后需要经过 <strong>out_proj</strong> 线性层（与 dense 类似，可按行切分），最后再 <strong>all-reduce 相加</strong>汇总。计算示例如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tp_size为2的场景，GPU0上，其中hidden_dim = #head * head_dim</span></span><br><span class="line"><span class="comment"># GPU0上：</span></span><br><span class="line">wq_sub1 = wq_weight[:, :hidden_dim // <span class="number">2</span>]</span><br><span class="line">wk_sub1 = wk_weight[:, :hidden_dim // <span class="number">2</span>]</span><br><span class="line">wv_sub1 = wv_weight[:, :hidden_dim // <span class="number">2</span>]</span><br><span class="line">wo_sub1 = wo_weight[:hidden_dim // <span class="number">2</span>, :]</span><br><span class="line"><span class="comment"># [bs, seq_len, hidden_dim//2] -&gt; [bs, seq_len, #head/2, head_dim]，获取前一半head</span></span><br><span class="line">q1 = (inputs @ wq_sub1).view(bs, seq_len, num_head/<span class="number">2</span>, head_dim).transpose(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">k1 = (inputs @ wk_sub1).view(bs, seq_len, num_head/<span class="number">2</span>, head_dim).transpose(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">v1 = (inputs @ wv_sub1).view(bs, seq_len, num_head/<span class="number">2</span>, head_dim).transpose(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line"><span class="comment"># 省略mask [bs, seq_len, #head/2, #head/2]</span></span><br><span class="line">attention_weight = softmax(q1 @ k1.transpose(<span class="number">2</span>, <span class="number">3</span>) / head_dim**<span class="number">0.5</span>, dim=-<span class="number">1</span>)</span><br><span class="line"><span class="comment"># [bs, seq_len, #head/2, #head/2] -&gt; [bs, seq_len, hidden_dim//2]</span></span><br><span class="line">context = (attention_weight @ v1).view(bs, seq_len, hidden_dim//<span class="number">2</span>)</span><br><span class="line"><span class="comment"># out_proj行切分后维度是[hidden_dim//2, hidden_dim]</span></span><br><span class="line">res = out_proj1(context)</span><br><span class="line"><span class="comment"># GPU0上最终得到的结果[bs, seq_len, hidden_dim]，GPU1也是一样的，最后这两个GPU进行all-reduce得到最终attention结果</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="三、PP：流水线并行"><a href="#三、PP：流水线并行" class="headerlink" title="三、PP：流水线并行"></a>三、PP：流水线并行</h2><p><strong>思路</strong>：按<strong>层</strong>把网络切成连续的若干段（stage），每段放在不同的 GPU 上，第 1 段算完一小批就传给第 2 段，各段同时开工，形成流水线。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>通信只发生在<strong>相邻stage之间</strong>（传递激活），数据量小，对带宽要求低，<strong>非常适合跨节点</strong>（以太网 &#x2F; IB 也可以）。</li>
+<li>能降低每卡显存（每卡只放自己那几层）。</li>
+</ul>
+<h2 id="四、EP：专家并行"><a href="#四、EP：专家并行" class="headerlink" title="四、EP：专家并行"></a>四、EP：专家并行</h2><p><strong>思路</strong>：专门针对 <strong>MoE（Mixture-of-Experts）</strong> 模型。MoE 把 FFN 层替换成多个「专家」（expert），每个 token 由<strong>门控网络（Router）</strong>挑选 top-k 个专家来计算，每一个专家就是之前的 FFN。EP 就是把众多专家<strong>分布到不同的 GPU</strong> 上，每个专家只处理被路由给它的 token。大模型中的大部分参数来自于moe结构，通过这个结构既保留了训练时模型的探索能力，又在推理时只选择topk个专家从而节省了算力。pytorch中moe forward部分代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># x: (batch, seq_len, emb_dim)</span></span><br><span class="line">scores = <span class="variable language_">self</span>.gate(x)  <span class="comment"># (b, seq_len, num_experts)</span></span><br><span class="line">topk_scores, topk_indices = torch.topk(scores, <span class="variable language_">self</span>.num_experts_per_tok, dim=-<span class="number">1</span>)</span><br><span class="line">topk_probs = torch.softmax(topk_scores, dim=-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">batch, seq_len, _ = x.shape</span><br><span class="line">x_flat = x.reshape(batch * seq_len, -<span class="number">1</span>)</span><br><span class="line">out_flat = torch.zeros(batch * seq_len, <span class="variable language_">self</span>.emb_dim, device=x.device, dtype=x.dtype)</span><br><span class="line"></span><br><span class="line">topk_indices_flat = topk_indices.reshape(-<span class="number">1</span>, <span class="variable language_">self</span>.num_experts_per_tok)</span><br><span class="line">topk_probs_flat = topk_probs.reshape(-<span class="number">1</span>, <span class="variable language_">self</span>.num_experts_per_tok)</span><br><span class="line"></span><br><span class="line">unique_experts = torch.unique(topk_indices_flat)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 整体思路是一次性处理整个batch关于这个expert的输入</span></span><br><span class="line"><span class="keyword">for</span> expert_id_tensor <span class="keyword">in</span> unique_experts:</span><br><span class="line">    expert_id = <span class="built_in">int</span>(expert_id_tensor.item())</span><br><span class="line"></span><br><span class="line">    mask = topk_indices_flat == expert_id</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> mask.<span class="built_in">any</span>():</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">    token_mask = mask.<span class="built_in">any</span>(dim=-<span class="number">1</span>)</span><br><span class="line">    selected_idx = token_mask.nonzero(as_tuple=<span class="literal">False</span>).squeeze(-<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">if</span> selected_idx.numel() == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># extract the token row, if this row use expert with expert_id</span></span><br><span class="line">    expert_input = x_flat.index_select(<span class="number">0</span>, selected_idx)</span><br><span class="line">    <span class="comment"># self.fc1 worked as gate</span></span><br><span class="line">    hidden = torch.nn.functional.silu(<span class="variable language_">self</span>.fc1[expert_id](expert_input)) * <span class="variable language_">self</span>.fc2[</span><br><span class="line">        expert_id</span><br><span class="line">    ](expert_input)</span><br><span class="line">    expert_out = <span class="variable language_">self</span>.fc3[expert_id](hidden)</span><br><span class="line"></span><br><span class="line">    mask_selected = mask[selected_idx]</span><br><span class="line">    slot_indices = mask_selected.<span class="built_in">int</span>().argmax(dim=-<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">    <span class="comment"># choose the weight of this expert for each selected token</span></span><br><span class="line">    selected_probs = torch.gather(</span><br><span class="line">        topk_probs_flat.index_select(<span class="number">0</span>, selected_idx), dim=-<span class="number">1</span>, index=slot_indices</span><br><span class="line">    ).squeeze(-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># weighted sum</span></span><br><span class="line">    out_flat.index_add_(<span class="number">0</span>, selected_idx, expert_out * selected_probs.unsqueeze(-<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+<figure style="text-align:center;margin:1.5em auto;">
+  <img src="/img/moe.png" alt="MoE 结构示意" style="display:block;margin:0 auto;max-width:100%;height:auto;">
+  <figcaption style="text-align:center;color:#666;font-size:0.9em;margin-top:0.5em;">图：MoE 结构示意</figcaption>
+</figure>
+
+<p><strong>特点</strong>：</p>
+<ul>
+<li>把<strong>远超单卡容量</strong>的专家参数量摊到更多卡上，专家总数可以远大于 GPU 数（一张卡可承载多个专家分片）。</li>
+<li>通信发生在 <strong>token 的路由交换（All-to-All）</strong>：Router 决定后，token 需要送到专家所在的卡。</li>
+<li>核心难点是<strong>负载均衡</strong>：若大量 token 涌向少数热门专家，会拖慢整体。常用 top-k 路由 + 辅助损失（aux loss，如 Switch &#x2F; GShard），或 DeepSeek 的无辅助损失路由。</li>
+<li>代表模型：Mixtral、DeepSeek-MoE &#x2F; V3、Qwen-MoE、Grok 等。</li>
+</ul>
+<h2 id="五、组合方式"><a href="#五、组合方式" class="headerlink" title="五、组合方式"></a>五、组合方式</h2><p>四种并行切的是<strong>不同的维度</strong>（数据、权重、层、专家），因此可以<strong>叠加</strong>使用。业界标准做法是「三维并行」<strong>DP × PP × TP</strong>（Megatron + DeepSpeed 的默认组合），MoE 模型再叠加 EP。</p>
+<h3 id="组合原则：通信成本匹配硬件拓扑"><a href="#组合原则：通信成本匹配硬件拓扑" class="headerlink" title="组合原则：通信成本匹配硬件拓扑"></a>组合原则：通信成本匹配硬件拓扑</h3><p>并行度划分要遵循「<strong>通信密集的维度放带宽高的地方</strong>」：</p>
+<ol>
+<li><strong>TP</strong> 通信最密（每层两次 AllReduce）→ 放在<strong>单机内</strong>（NVLink），TP 维度 ≤ 单机卡数；</li>
+<li><strong>EP</strong> 次之（All-to-All）→ 尽量放在<strong>节点内</strong>或相邻节点；</li>
+<li><strong>PP</strong> 通信量小 → 可以<strong>跨节点</strong>串联；</li>
+<li><strong>DP</strong> 只做梯度同步 → 可以<strong>全局</strong>扩展（甚至跨机房）。</li>
+</ol>
+<h2 id="六、vllm与Sglang启动配置"><a href="#六、vllm与Sglang启动配置" class="headerlink" title="六、vllm与Sglang启动配置"></a>六、vllm与Sglang启动配置</h2></div></article></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="/img/avatar.png" alt="Ningshuang Huang"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Ningshuang Huang</p><p class="is-size-6 is-block">前端开发者</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>China</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives/"><p class="title">2</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories/"><p class="title">2</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags/"><p class="title">5</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/huanGninGshuanG" target="_blank" rel="me noopener">关注我</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="me noopener" title="Github" href="https://github.com/huanGninGshuanG"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="me noopener" title="RSS" href="/"><i class="fas fa-rss"></i></a></div></div></div><!--!--><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/LLM/"><span class="level-start"><span class="level-item">LLM</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/%E6%8A%80%E6%9C%AF/"><span class="level-start"><span class="level-item">技术</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2026-08-19T09:00:00.000Z">2026-08-19</time></p><p class="title"><a href="/2026/08/19/diagram-demo/">绘图插件演示：可在线编辑的技术示意图</a></p><p class="categories"><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2026-08-18T22:44:00.000Z">2026-08-18</time></p><p class="title"><a href="/2026/08/18/llm-parallelism-dp-tp-pp-ep/">大模型推理中常见的并行策略</a></p><p class="categories"><a href="/categories/LLM/">LLM</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2026/08/"><span class="level-start"><span class="level-item">八月 2026</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/Hexo/"><span class="tag">Hexo</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%8E%A8%E7%90%86/"><span class="tag">分布式推理</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/"><span class="tag">并行策略</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%8F%92%E4%BB%B6/"><span class="tag">插件</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A4%BA%E6%84%8F%E5%9B%BE/"><span class="tag">示意图</span><span class="tag">1</span></a></div></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">follow.it</h3><form action="" method="post" target="_blank"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="我的博客" height="28"></a><p class="is-size-7"><span>&copy; 2026 Ningshuang Huang</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p><p class="is-size-7">© 2025 Ningshuang Huang</p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script data-pjax src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script data-pjax src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script src="/js/pjax.js"></script><!--!--><!--!--><!--!--><script data-pjax src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script data-pjax src="/js/insight.js" defer></script><script data-pjax>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

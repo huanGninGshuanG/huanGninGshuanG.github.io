@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 390" font-family="'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#555"/></marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="20" y="34" font-size="22" font-weight="bold" fill="#222">大模型训练 3D 并行组合示意（DP × PP × TP）</text>
+  <text x="20" y="58" font-size="14" fill="#555">示例：32 张 GPU = DP 2 副本 × PP 4 段 × TP 4 卡</text>
+
+  <!-- 列头：PP 段 -->
+  <text x="108" y="136" font-size="13" font-weight="bold" fill="#333" text-anchor="middle">PP 段 1</text>
+  <text x="192" y="136" font-size="13" font-weight="bold" fill="#333" text-anchor="middle">PP 段 2</text>
+  <text x="276" y="136" font-size="13" font-weight="bold" fill="#333" text-anchor="middle">PP 段 3</text>
+  <text x="360" y="136" font-size="13" font-weight="bold" fill="#333" text-anchor="middle">PP 段 4</text>
+
+  <!-- DP 行组标签 -->
+  <text x="56" y="178" font-size="13" font-weight="bold" fill="#444" text-anchor="end">DP 副本 0</text>
+  <text x="56" y="244" font-size="13" font-weight="bold" fill="#444" text-anchor="end">DP 副本 1</text>
+
+  <!-- DP 组虚线框 -->
+  <rect x="64" y="143" width="342" height="71" fill="none" stroke="#888" stroke-width="1.2" stroke-dasharray="6 4"/>
+  <rect x="64" y="215" width="342" height="71" fill="none" stroke="#888" stroke-width="1.2" stroke-dasharray="6 4"/>
+
+  <!-- GPU 网格：列=PP 段(0..3)，行=DP 副本(0..1)，每格内 2x2=TP 4 卡 -->
+  <!-- 列 x: 70,154,238,322；行 y: 150,216；格 76x58；小格 34x25 偏移 (3,3)(41,3)(3,32)(41,32) -->
+  <g>
+    <rect x="70"  y="150" width="76" height="58" fill="none" stroke="#333" stroke-width="1.5"/>
+    <rect x="70"  y="216" width="76" height="58" fill="none" stroke="#333" stroke-width="1.5"/>
+    <rect x="154" y="150" width="76" height="58" fill="none" stroke="#333" stroke-width="1.5"/>
+    <rect x="154" y="216" width="76" height="58" fill="none" stroke="#333" stroke-width="1.5"/>
+    <rect x="238" y="150" width="76" height="58" fill="none" stroke="#333" stroke-width="1.5"/>
+    <rect x="238" y="216" width="76" height="58" fill="none" stroke="#333" stroke-width="1.5"/>
+    <rect x="322" y="150" width="76" height="58" fill="none" stroke="#333" stroke-width="1.5"/>
+    <rect x="322" y="216" width="76" height="58" fill="none" stroke="#333" stroke-width="1.5"/>
+  </g>
+
+  <!-- 小格（TP 卡），按列配色 -->
+  <g font-size="9.5" fill="#333" text-anchor="middle" dominant-baseline="central">
+    <!-- 列 1：蓝色 -->
+    <g>
+      <rect x="73"  y="153" width="34" height="25" fill="#d6e6f5" stroke="#4a7fb5" stroke-width="1"/>
+      <rect x="111" y="153" width="34" height="25" fill="#d6e6f5" stroke="#4a7fb5" stroke-width="1"/>
+      <rect x="73"  y="182" width="34" height="25" fill="#d6e6f5" stroke="#4a7fb5" stroke-width="1"/>
+      <rect x="111" y="182" width="34" height="25" fill="#d6e6f5" stroke="#4a7fb5" stroke-width="1"/>
+      <text x="90"  y="165.5">T0</text><text x="128" y="165.5">T1</text>
+      <text x="90"  y="194.5">T2</text><text x="128" y="194.5">T3</text>
+      <rect x="73"  y="219" width="34" height="25" fill="#d6e6f5" stroke="#4a7fb5" stroke-width="1"/>
+      <rect x="111" y="219" width="34" height="25" fill="#d6e6f5" stroke="#4a7fb5" stroke-width="1"/>
+      <rect x="73"  y="248" width="34" height="25" fill="#d6e6f5" stroke="#4a7fb5" stroke-width="1"/>
+      <rect x="111" y="248" width="34" height="25" fill="#d6e6f5" stroke="#4a7fb5" stroke-width="1"/>
+      <text x="90"  y="231.5">T0</text><text x="128" y="231.5">T1</text>
+      <text x="90"  y="260.5">T2</text><text x="128" y="260.5">T3</text>
+    </g>
+    <!-- 列 2：绿色 -->
+    <g>
+      <rect x="157" y="153" width="34" height="25" fill="#d5edd9" stroke="#3f8f55" stroke-width="1"/>
+      <rect x="195" y="153" width="34" height="25" fill="#d5edd9" stroke="#3f8f55" stroke-width="1"/>
+      <rect x="157" y="182" width="34" height="25" fill="#d5edd9" stroke="#3f8f55" stroke-width="1"/>
+      <rect x="195" y="182" width="34" height="25" fill="#d5edd9" stroke="#3f8f55" stroke-width="1"/>
+      <text x="174" y="165.5">T0</text><text x="212" y="165.5">T1</text>
+      <text x="174" y="194.5">T2</text><text x="212" y="194.5">T3</text>
+      <rect x="157" y="219" width="34" height="25" fill="#d5edd9" stroke="#3f8f55" stroke-width="1"/>
+      <rect x="195" y="219" width="34" height="25" fill="#d5edd9" stroke="#3f8f55" stroke-width="1"/>
+      <rect x="157" y="248" width="34" height="25" fill="#d5edd9" stroke="#3f8f55" stroke-width="1"/>
+      <rect x="195" y="248" width="34" height="25" fill="#d5edd9" stroke="#3f8f55" stroke-width="1"/>
+      <text x="174" y="231.5">T0</text><text x="212" y="231.5">T1</text>
+      <text x="174" y="260.5">T2</text><text x="212" y="260.5">T3</text>
+    </g>
+    <!-- 列 3：橙色 -->
+    <g>
+      <rect x="241" y="153" width="34" height="25" fill="#fbe7cf" stroke="#cf8f2f" stroke-width="1"/>
+      <rect x="279" y="153" width="34" height="25" fill="#fbe7cf" stroke="#cf8f2f" stroke-width="1"/>
+      <rect x="241" y="182" width="34" height="25" fill="#fbe7cf" stroke="#cf8f2f" stroke-width="1"/>
+      <rect x="279" y="182" width="34" height="25" fill="#fbe7cf" stroke="#cf8f2f" stroke-width="1"/>
+      <text x="258" y="165.5">T0</text><text x="296" y="165.5">T1</text>
+      <text x="258" y="194.5">T2</text><text x="296" y="194.5">T3</text>
+      <rect x="241" y="219" width="34" height="25" fill="#fbe7cf" stroke="#cf8f2f" stroke-width="1"/>
+      <rect x="279" y="219" width="34" height="25" fill="#fbe7cf" stroke="#cf8f2f" stroke-width="1"/>
+      <rect x="241" y="248" width="34" height="25" fill="#fbe7cf" stroke="#cf8f2f" stroke-width="1"/>
+      <rect x="279" y="248" width="34" height="25" fill="#fbe7cf" stroke="#cf8f2f" stroke-width="1"/>
+      <text x="258" y="231.5">T0</text><text x="296" y="231.5">T1</text>
+      <text x="258" y="260.5">T2</text><text x="296" y="260.5">T3</text>
+    </g>
+    <!-- 列 4：紫色 -->
+    <g>
+      <rect x="325" y="153" width="34" height="25" fill="#ecddf5" stroke="#8354a8" stroke-width="1"/>
+      <rect x="363" y="153" width="34" height="25" fill="#ecddf5" stroke="#8354a8" stroke-width="1"/>
+      <rect x="325" y="182" width="34" height="25" fill="#ecddf5" stroke="#8354a8" stroke-width="1"/>
+      <rect x="363" y="182" width="34" height="25" fill="#ecddf5" stroke="#8354a8" stroke-width="1"/>
+      <text x="342" y="165.5">T0</text><text x="380" y="165.5">T1</text>
+      <text x="342" y="194.5">T2</text><text x="380" y="194.5">T3</text>
+      <rect x="325" y="219" width="34" height="25" fill="#ecddf5" stroke="#8354a8" stroke-width="1"/>
+      <rect x="363" y="219" width="34" height="25" fill="#ecddf5" stroke="#8354a8" stroke-width="1"/>
+      <rect x="325" y="248" width="34" height="25" fill="#ecddf5" stroke="#8354a8" stroke-width="1"/>
+      <rect x="363" y="248" width="34" height="25" fill="#ecddf5" stroke="#8354a8" stroke-width="1"/>
+      <text x="342" y="231.5">T0</text><text x="380" y="231.5">T1</text>
+      <text x="342" y="260.5">T2</text><text x="380" y="260.5">T3</text>
+    </g>
+  </g>
+
+  <!-- PP 数据流箭头（网格下方） -->
+  <line x1="70" y1="330" x2="390" y2="330" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+  <polygon points="84,325 70,330 84,335" fill="#555"/>
+  <text x="234" y="352" font-size="12.5" fill="#333" text-anchor="middle">PP 数据流：微批次在 4 个流水线段之间依次前向 / 反向（1F1B 调度）</text>
+
+  <!-- DP 梯度同步箭头（网格左侧） -->
+  <line x1="48" y1="160" x2="48" y2="256" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+  <polygon points="43,166 48,152 53,166" fill="#555"/>
+  <text x="24" y="212" font-size="11.5" fill="#333" text-anchor="middle" transform="rotate(-90 24 212)">副本间梯度 AllReduce</text>
+
+  <!-- 图例与说明 -->
+  <text x="470" y="140" font-size="18" font-weight="bold" fill="#222">图例与说明</text>
+
+  <rect x="470" y="160" width="14" height="14" fill="#d6e6f5" stroke="#4a7fb5"/>
+  <rect x="488" y="160" width="14" height="14" fill="#d5edd9" stroke="#3f8f55"/>
+  <rect x="506" y="160" width="14" height="14" fill="#fbe7cf" stroke="#cf8f2f"/>
+  <rect x="524" y="160" width="14" height="14" fill="#ecddf5" stroke="#8354a8"/>
+  <text x="546" y="168" font-size="12.5" fill="#333">PP 流水线并行：网络按层切成 4 段，分别放在 4 列 GPU 组上，</text>
+  <text x="546" y="185" font-size="12.5" fill="#333">段间只传递激活 / 梯度（通信量小），适合跨节点。</text>
+
+  <rect x="470" y="212" width="12" height="9" fill="#d6e6f5" stroke="#4a7fb5"/>
+  <rect x="484" y="212" width="12" height="9" fill="#d6e6f5" stroke="#4a7fb5"/>
+  <rect x="470" y="223" width="12" height="9" fill="#d6e6f5" stroke="#4a7fb5"/>
+  <rect x="484" y="223" width="12" height="9" fill="#d6e6f5" stroke="#4a7fb5"/>
+  <text x="500" y="220" font-size="12.5" fill="#333">TP 张量并行：每个格内的 2×2 小格 = 4 张卡共同计算同一层，</text>
+  <text x="500" y="237" font-size="12.5" fill="#333">权重按行 / 列切分，组内高频 AllReduce，依赖 NVLink，一般限制在单机内。</text>
+
+  <rect x="470" y="268" width="14" height="8" fill="#cfe8cf" stroke="#3f8f55"/>
+  <rect x="470" y="278" width="14" height="8" fill="#e8f7e8" stroke="#3f8f55"/>
+  <text x="500" y="275" font-size="12.5" fill="#333">DP 数据并行：上下两行各持有一份完整模型副本，分别处理不同 batch，</text>
+  <text x="500" y="292" font-size="12.5" fill="#333">每步训练结束后 AllReduce 同步梯度（通信量 ≈ 模型大小）。</text>
+
+  <text x="470" y="326" font-size="12.5" fill="#b3541e">★ 若模型含 MoE 专家层：专家再按 EP 切分（见文中 Mermaid 示意图），EP 可与 TP / PP / DP 叠加。</text>
+</svg>
