@@ -1,0 +1,130 @@
+<mxfile host="app.diagrams.net" agent="hexo-blog" version="26.0.0">
+<diagram id="reduce-scatter" name="Reduce-Scatter">
+<mxGraphModel dx="1100" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="600" math="0" shadow="0">
+<root>
+<mxCell id="0" />
+<mxCell id="1" parent="0" />
+<mxCell id="title" value="Reduce-Scatter 示意（4 个 GPU）" style="text;html=0;strokeColor=none;fillColor=none;align=center;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+<mxGeometry x="40" y="10" width="900" height="30" as="geometry" />
+</mxCell>
+<mxCell id="lbl1" value="① 初始：每张卡持有 4 个数据块" style="text;html=0;strokeColor=none;fillColor=none;fontSize=13;" vertex="1" parent="1">
+<mxGeometry x="40" y="48" width="300" height="24" as="geometry" />
+</mxCell>
+<mxCell id="lbl2" value="② 按块号把份额发给对应卡（同色箭头，每卡收齐 4 份后求和）" style="text;html=0;strokeColor=none;fillColor=none;fontSize=13;" vertex="1" parent="1">
+<mxGeometry x="320" y="48" width="420" height="24" as="geometry" />
+</mxCell>
+<mxCell id="lbl3" value="③ 完成：每张卡持有 1 个数据块的全局和" style="text;html=0;strokeColor=none;fillColor=none;fontSize=13;" vertex="1" parent="1">
+<mxGeometry x="780" y="48" width="340" height="24" as="geometry" />
+</mxCell>
+<mxCell id="g0" value="GPU 0" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+<mxGeometry x="40" y="90" width="210" height="80" as="geometry" />
+</mxCell>
+<mxCell id="c00" value="块0" style="rounded=0;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="52" y="118" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="c01" value="块1" style="rounded=0;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="100" y="118" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="c02" value="块2" style="rounded=0;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="148" y="118" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="c03" value="块3" style="rounded=0;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="196" y="118" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="r0" value="GPU 0 结果&#10;Σ 块0" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+<mxGeometry x="780" y="90" width="200" height="80" as="geometry" />
+</mxCell>
+<mxCell id="g1" value="GPU 1" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+<mxGeometry x="40" y="200" width="210" height="80" as="geometry" />
+</mxCell>
+<mxCell id="c10" value="块0" style="rounded=0;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="52" y="228" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="c11" value="块1" style="rounded=0;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="100" y="228" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="c12" value="块2" style="rounded=0;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="148" y="228" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="c13" value="块3" style="rounded=0;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="196" y="228" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="r1" value="GPU 1 结果&#10;Σ 块1" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+<mxGeometry x="780" y="200" width="200" height="80" as="geometry" />
+</mxCell>
+<mxCell id="g2" value="GPU 2" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+<mxGeometry x="40" y="310" width="210" height="80" as="geometry" />
+</mxCell>
+<mxCell id="c20" value="块0" style="rounded=0;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="52" y="338" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="c21" value="块1" style="rounded=0;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="100" y="338" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="c22" value="块2" style="rounded=0;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="148" y="338" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="c23" value="块3" style="rounded=0;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="196" y="338" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="r2" value="GPU 2 结果&#10;Σ 块2" style="rounded=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+<mxGeometry x="780" y="310" width="200" height="80" as="geometry" />
+</mxCell>
+<mxCell id="g3" value="GPU 3" style="rounded=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+<mxGeometry x="40" y="420" width="210" height="80" as="geometry" />
+</mxCell>
+<mxCell id="c30" value="块0" style="rounded=0;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="52" y="448" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="c31" value="块1" style="rounded=0;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="100" y="448" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="c32" value="块2" style="rounded=0;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="148" y="448" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="c33" value="块3" style="rounded=0;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+<mxGeometry x="196" y="448" width="44" height="26" as="geometry" />
+</mxCell>
+<mxCell id="r3" value="GPU 3 结果&#10;Σ 块3" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+<mxGeometry x="780" y="420" width="200" height="80" as="geometry" />
+</mxCell>
+<mxCell id="e01" style="endArrow=block;endFill=1;html=0;strokeColor=#82b366;strokeWidth=2;" edge="1" parent="1" source="c01" target="r1">
+<mxGeometry relative="1" as="geometry" />
+</mxCell>
+<mxCell id="e02" style="endArrow=block;endFill=1;html=0;strokeColor=#d6b656;strokeWidth=2;" edge="1" parent="1" source="c02" target="r2">
+<mxGeometry relative="1" as="geometry" />
+</mxCell>
+<mxCell id="e03" style="endArrow=block;endFill=1;html=0;strokeColor=#9673a6;strokeWidth=2;" edge="1" parent="1" source="c03" target="r3">
+<mxGeometry relative="1" as="geometry" />
+</mxCell>
+<mxCell id="e10" style="endArrow=block;endFill=1;html=0;strokeColor=#6c8ebf;strokeWidth=2;" edge="1" parent="1" source="c10" target="r0">
+<mxGeometry relative="1" as="geometry" />
+</mxCell>
+<mxCell id="e12" style="endArrow=block;endFill=1;html=0;strokeColor=#d6b656;strokeWidth=2;" edge="1" parent="1" source="c12" target="r2">
+<mxGeometry relative="1" as="geometry" />
+</mxCell>
+<mxCell id="e13" style="endArrow=block;endFill=1;html=0;strokeColor=#9673a6;strokeWidth=2;" edge="1" parent="1" source="c13" target="r3">
+<mxGeometry relative="1" as="geometry" />
+</mxCell>
+<mxCell id="e20" style="endArrow=block;endFill=1;html=0;strokeColor=#6c8ebf;strokeWidth=2;" edge="1" parent="1" source="c20" target="r0">
+<mxGeometry relative="1" as="geometry" />
+</mxCell>
+<mxCell id="e21" style="endArrow=block;endFill=1;html=0;strokeColor=#82b366;strokeWidth=2;" edge="1" parent="1" source="c21" target="r1">
+<mxGeometry relative="1" as="geometry" />
+</mxCell>
+<mxCell id="e23" style="endArrow=block;endFill=1;html=0;strokeColor=#9673a6;strokeWidth=2;" edge="1" parent="1" source="c23" target="r3">
+<mxGeometry relative="1" as="geometry" />
+</mxCell>
+<mxCell id="e30" style="endArrow=block;endFill=1;html=0;strokeColor=#6c8ebf;strokeWidth=2;" edge="1" parent="1" source="c30" target="r0">
+<mxGeometry relative="1" as="geometry" />
+</mxCell>
+<mxCell id="e31" style="endArrow=block;endFill=1;html=0;strokeColor=#82b366;strokeWidth=2;" edge="1" parent="1" source="c31" target="r1">
+<mxGeometry relative="1" as="geometry" />
+</mxCell>
+<mxCell id="e32" style="endArrow=block;endFill=1;html=0;strokeColor=#d6b656;strokeWidth=2;" edge="1" parent="1" source="c32" target="r2">
+<mxGeometry relative="1" as="geometry" />
+</mxCell>
+</root>
+</mxGraphModel>
+</diagram>
+</mxfile>
