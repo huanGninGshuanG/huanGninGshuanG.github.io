@@ -21,7 +21,7 @@ categories:
 下面逐个介绍，最后给出它们的组合方式与示意图。
 
 
-## 一、常见通信原语
+## 预备：常见通信原语
 1. reduce-scatter: 
 2. all-gather:
 3. all-reduce:
@@ -38,43 +38,94 @@ categories:
 
 ## 二、TP：张量并行
 
-**思路**：把权重切分到多个GPU上，因此每个GPU只跑该算子的部分计算，计算完成后需要通过**all-reduce**进行合并多个gpu的计算结果。大模型中有两类核心的模块`Attention`和`FFN`，下面以VLLM中的实现简单介绍一下这两个模块如何进行切分与计算。
+**思路**：把权重切分到多个 GPU 上，每个 GPU 只跑该算子的**部分计算**，计算完成后通过通信合并多个 GPU 的结果。张量并行分为两种：**行并行**与**列并行**。
 
-### 1. FFN的TP切分
+| | 行并行 | 列并行 |
+| --- | --- | --- |
+| 切分方式 | 权重 `Y` **按列**拆分为 `[Y1, Y2]` | 权重 `Y` **按行**拆分为 `[Y1; Y2]` |
+| 计算 | 两个设备分别计算 `X@Y1`、`X@Y2` | 两个设备分别进行计算 |
+| 通信合并 | **all-gather 拼接**两个结果矩阵 | **all-reduce 求和** |
+| 最终结果 | 按列拼接成完整结果 | 对应元素相加得到完整结果 |
 
-FFN中的基本结构如下图，其基本计算为`down_proj(SwiGlu(gate(X))*up_proj(X))`，其中各个部分含义如下：
+<!-- 插入mermaid 图片，展示行并行与列并行 -->
+
+大模型中有两类核心模块 `Attention` 和 `FFN`，下面以 VLLM 中的实现简单介绍这两个模块如何进行切分与计算。
+
+### 1. FFN 的 TP 切分
+
+FFN 的基本结构如下图，其基本计算为 `down_proj(SwiGlu(gate(X)) · up_proj(X))`，各组成部分含义如下：
 
 | 名称 | 含义 | 维度 |
 | --- | --- | --- |
-| X | Attention的输出 | [bs, seq_len, dim] |
-| gate | 门控的dense权重 | [intermediate, dim] |
-| SwiGlu | 激活函数，缩放up_proj中提取的特征 | 函数，对输入矩阵逐一运算 |
-| up_proj | 提取输入特征 | [intermediate, dim] |
-| down_proj | 保持FFN输出维度与输入维度一致 | [dim, intermediate] |
+| `X` | Attention 的输出 | `[bs, seq_len, dim]` |
+| `gate` | 门控的 dense 权重 | `[dim, intermediate]` |
+| `SwiGlu` | 激活函数，缩放 up_proj 提取的特征 | 函数，对输入矩阵逐一运算 |
+| `up_proj` | 提取输入特征 | `[dim, intermediate]` |
+| `down_proj` | 保持 FFN 输出维度与输入一致 | `[intermediate, dim]` |
 
+在工程实现中，`SwiGlu(gate(X)) · up_proj(X)` 可以合并为 **`SiluAndMul` 算子**：
 
-{% diagram ffn %}
+1. 把 `gate` 与 `up_proj` 两个权重矩阵合并为一个矩阵 `W [dim, 2*intermediate]`；
+2. 一次矩阵乘 `X @ W` 即可同时算出两个部分的结果；
+3. 对前一半列应用激活函数，再与后一半列**按位乘**。
 
-### 2. MHA的TP切分
+最终流程简化为 `down_proj(SiluAndMul(W, X))`。
+
+<!-- 插入图片 展示Swiglu的流程 -->
+
+假设有两块 GPU，下面分别看**行并行切分**与**列切分**两种方式。
+
+**方式一：行并行切分 `gate` / `up_proj`**
+
+- **GPU0**：拿 `gate`、`up_proj` 的**前一半行**权重，拼接为 `W1 [dim/2, 2*intermediate]`；输入为匹配做**列切分**，取前一半列 `X1 [bs, seq_len, dim/2]`，计算 `X1 @ W1` → `[bs, seq_len, 2*intermediate]`。
+- **GPU1**：拿**后一半行**权重，拼接为 `W2 [dim/2, 2*intermediate]`；取输入后一半列 `X2 [bs, seq_len, dim/2]`，计算 `X2 @ W2` → `[bs, seq_len, 2*intermediate]`。
+- 两部分 **all-reduce 相加**后才是最终结果。⚠️ 不能直接使用 `SiluAndMul(W1, X1)`：SwiGlu 不是线性函数，`SwiGlu(X1@gate1 + X2@gate2) ≠ SwiGlu(X1@gate1) + SwiGlu(X2@gate2)`，因此**行并行切分会额外引入一次通信**，最终结果再送入 `down_proj`。
+
+**方式二：列切分 `gate` / `up_proj`**
+
+- **GPU0**：拿 `gate`、`up_proj` 的**前一半列** `[dim, intermediate/2]`，拼接出 `W1 [dim, intermediate]`，`X` 直接复制到该 GPU 上。因为列切分的结果无需相加、只需在对应维度拼接，可以直接使用 `SiluAndMul(W1, X)`。
+- **GPU1**：同理。
+- 得到两部分结果 `A1`、`A2` 后，对 `down_proj` 做**行切分**，两个 GPU 内分别对 `A1`、`A2` 做矩阵乘，最后结果再引入一次 **all-reduce 相加**。
+- 结论：列切分在送入 `down_proj` 前**无需额外引入通信**，效率更高。
+
+### 2. MHA 的 TP 切分
+
+MHA 的输入维度是 `[bs, seq_len, #head, head_dim]`，每个 head 独立计算 qkv，因此天然可以在 **head 维度**拆分：不同设备计算不同的 head。计算完每个 head 的 attention score 后需要经过 **out_proj** 线性层（与 dense 类似，可按行切分），最后再 **all-reduce 相加**汇总。计算示例如下：
+
+```python
+# tp_size为2的场景，GPU0上，其中hidden_dim = #head * head_dim
+# GPU0上：
+wq_sub1 = wq_weight[:, :hidden_dim // 2]
+wk_sub1 = wk_weight[:, :hidden_dim // 2]
+wv_sub1 = wv_weight[:, :hidden_dim // 2]
+wo_sub1 = wo_weight[:hidden_dim // 2, :]
+# [bs, seq_len, hidden_dim//2] -> [bs, seq_len, #head/2, head_dim]，获取前一半head
+q1 = (inputs @ wq_sub1).view(bs, seq_len, num_head/2, head_dim).transpose(1, 2)
+k1 = (inputs @ wk_sub1).view(bs, seq_len, num_head/2, head_dim).transpose(1, 2)
+v1 = (inputs @ wv_sub1).view(bs, seq_len, num_head/2, head_dim).transpose(1, 2)
+# 省略mask [bs, seq_len, #head/2, #head/2]
+attention_weight = softmax(q1 @ k1.transpose(2, 3) / head_dim**0.5, dim=-1)
+# [bs, seq_len, #head/2, #head/2] -> [bs, seq_len, hidden_dim//2]
+context = (attention_weight @ v1).view(bs, seq_len, hidden_dim//2)
+# out_proj行切分后维度是[hidden_dim//2, hidden_dim]
+res = out_proj1(context)
+# GPU0上最终得到的结果[bs, seq_len, hidden_dim]，GPU1也是一样的，最后这两个GPU进行all-reduce得到最终attention结果
+
+```
 
 ## 三、PP：流水线并行
 
-**思路**：按**层**把网络切成连续的若干段（stage），每段放在不同的 GPU / GPU 组上。输入先以**微批次（micro-batch）**切碎，第 1 段算完一小批就传给第 2 段，各段同时开工，形成流水线。
-
-两种经典调度：
-
-- **GPipe**：先整批前向、再整批反向，实现简单但空转（bubble）多；
-- **1F1B**（one-forward-one-backward）：前向与反向交错执行，bubble 更小、显存更省，是 Megatron / DeepSpeed 的主流选择。
+**思路**：按**层**把网络切成连续的若干段（stage），每段放在不同的 GPU 上，第 1 段算完一小批就传给第 2 段，各段同时开工，形成流水线。
 
 **特点**：
 
-- 通信只发生在**相邻段之间**（传递激活 / 梯度），数据量小，对带宽要求低，**非常适合跨节点**（以太网 / IB 也可以）。
+- 通信只发生在**相邻stage之间**（传递激活），数据量小，对带宽要求低，**非常适合跨节点**（以太网 / IB 也可以）。
 - 能降低每卡显存（每卡只放自己那几层）。
-- 代价是流水线**气泡**（bubble）空转：`bubble ≈ (PP-1) / (PP-1 + 2×微批次数)`，PP 段数越多、微批次越少，浪费越大；调度也最复杂。
 
 ## 四、EP：专家并行
 
-**思路**：专门针对 **MoE（Mixture-of-Experts）** 模型。MoE 把 FFN 层替换成多个「专家」（expert），每个 token 由**门控网络（Router）**挑选 top-k 个专家来计算。EP 就是把众多专家**分布到不同的 GPU** 上，每个专家只处理被路由给它的 token（示意图见下文）。
+**思路**：专门针对 **MoE（Mixture-of-Experts）** 模型。MoE 把 FFN 层替换成多个「专家」（expert），每个 token 由**门控网络（Router）**挑选 top-k 个专家来计算。EP 就是把众多专家**分布到不同的 GPU** 上，每个专家只处理被路由给它的 token（示意图见下文）。一个使用pytorch实现的简单MOE代码如下：
+
 
 **特点**：
 
@@ -96,24 +147,4 @@ FFN中的基本结构如下图，其基本计算为`down_proj(SwiGlu(gate(X))*up
 3. **PP** 通信量小 → 可以**跨节点**串联；
 4. **DP** 只做梯度同步 → 可以**全局**扩展（甚至跨机房）。
 
-### 三维组合示意（DP2 × PP4 × TP4，共 32 卡）
-
-![3D 并行组合示意](/img/parallel-combine.svg)
-
-图 1 中：
-
-- **横向 4 列 = PP**：模型按层切成 4 段，段间只传激活 / 梯度，微批次流水线执行；
-- **每格内 2×2 小格 = TP**：同一层的权重被切到组内 4 卡，组内高频 AllReduce（NVLink）；
-- **上下 2 行 = DP**：各持一份完整模型副本，处理不同 batch，每步 AllReduce 同步梯度。
-
-实际部署时，例如 **64 卡 = DP4 × PP4 × TP4**：每 4 张卡组成一个 TP 组（同一台 8 卡机器里放 2 个 TP 组），4 个 TP 组串成流水线，整体再复制 4 份做数据并行。千亿级稠密模型（如 GPT-3 175B 的 Megatron 版本）就是用 `TP8 × PP 数十 × DP 数十` 在几千张卡上训练。
-
-### MoE 模型：叠加 EP
-
-对于 MoE 模型，每个 stage 里的专家层再按 **EP** 切分（Mermaid 示意图）：
-
-图中每个 Token 先经门控网络挑选 top-k 个专家（示意 k 覆盖全部专家，实际通常 k=1~8），再被路由到对应专家所在的卡计算；专家层通信为 All-to-All 的 token 交换。
-
-以 DeepSeek-V3 / Mixtral 这类模型为例，常见组合为 **TP × PP × EP × DP**：节点内先做 TP（张量并行）再叠 EP（专家并行），节点间用 PP 串流水线，最外层 DP 复制多份。EP 与 DP 的区别要分清：DP 的每个副本都有**完整模型**；EP 则是每张卡只有**部分专家**。
-
-实际框架（Megatron-LM、DeepSpeed、vLLM、SGLang 等）都支持任意组合，选型时把握一条主线即可：**把通信最密集的 TP/EP 放在带宽最高的地方，PP 串节点、DP 铺全局**，并根据显存、算力、网络带宽做权衡。
+## 六、vllm与Sglang启动配置
