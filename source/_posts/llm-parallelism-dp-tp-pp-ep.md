@@ -77,8 +77,6 @@ categories:
 | 通信合并 | **all-gather 拼接**两个结果矩阵 | **all-reduce 求和** |
 | 最终结果 | 按列拼接成完整结果 | 对应元素相加得到完整结果 |
 
-<!-- 插入mermaid 图片，展示行并行与列并行 -->
-
 大模型中有三类核心模块 Attention、FFN 和 embedding / lm-head，下面以 VLLM 中的实现简单介绍这两个模块如何进行切分与计算。
 
 ### 1. FFN 的 TP 切分
@@ -100,8 +98,6 @@ FFN 的基本结构如下图，其基本计算为 down_proj(SwiGlu(gate(X)) · u
 3. 对前一半列应用激活函数，再与后一半列**按位乘**。
 
 最终流程简化为 down_proj(SiluAndMul(W, X))。
-
-<!-- 插入图片 展示Swiglu的流程 -->
 
 假设有两块 GPU，下面分别看**行并行切分**与**列切分**两种方式。
 
