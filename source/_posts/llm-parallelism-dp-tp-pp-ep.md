@@ -42,55 +42,55 @@ categories:
 
 | | 行并行 | 列并行 |
 | --- | --- | --- |
-| 切分方式 | 权重 `Y` **按列**拆分为 `[Y1, Y2]` | 权重 `Y` **按行**拆分为 `[Y1; Y2]` |
-| 计算 | 两个设备分别计算 `X@Y1`、`X@Y2` | 两个设备分别进行计算 |
+| 切分方式 | 权重 Y **按列**拆分为 [Y1, Y2] | 权重 Y **按行**拆分为 [Y1; Y2] |
+| 计算 | 两个设备分别计算 X@Y1、X@Y2 | 两个设备分别进行计算 |
 | 通信合并 | **all-gather 拼接**两个结果矩阵 | **all-reduce 求和** |
 | 最终结果 | 按列拼接成完整结果 | 对应元素相加得到完整结果 |
 
 <!-- 插入mermaid 图片，展示行并行与列并行 -->
 
-大模型中有两类核心模块 `Attention` 和 `FFN`，下面以 VLLM 中的实现简单介绍这两个模块如何进行切分与计算。
+大模型中有三类核心模块 Attention、FFN 和 embedding / lm-head，下面以 VLLM 中的实现简单介绍这两个模块如何进行切分与计算。
 
 ### 1. FFN 的 TP 切分
 
-FFN 的基本结构如下图，其基本计算为 `down_proj(SwiGlu(gate(X)) · up_proj(X))`，各组成部分含义如下：
+FFN 的基本结构如下图，其基本计算为 down_proj(SwiGlu(gate(X)) · up_proj(X))，各组成部分含义如下：
 
 | 名称 | 含义 | 维度 |
 | --- | --- | --- |
-| `X` | Attention 的输出 | `[bs, seq_len, dim]` |
-| `gate` | 门控的 dense 权重 | `[dim, intermediate]` |
-| `SwiGlu` | 激活函数，缩放 up_proj 提取的特征 | 函数，对输入矩阵逐一运算 |
-| `up_proj` | 提取输入特征 | `[dim, intermediate]` |
-| `down_proj` | 保持 FFN 输出维度与输入一致 | `[intermediate, dim]` |
+| X | Attention 的输出 | [bs, seq_len, dim] |
+| gate | 门控的 dense 权重 | [dim, intermediate] |
+| SwiGlu | 激活函数，缩放 up_proj 提取的特征 | 函数，对输入矩阵逐一运算 |
+| up_proj | 提取输入特征 | [dim, intermediate] |
+| down_proj | 保持 FFN 输出维度与输入一致 | [intermediate, dim] |
 
-在工程实现中，`SwiGlu(gate(X)) · up_proj(X)` 可以合并为 **`SiluAndMul` 算子**：
+在工程实现中，SwiGlu(gate(X)) · up_proj(X) 可以合并为 **SiluAndMul 算子**：
 
-1. 把 `gate` 与 `up_proj` 两个权重矩阵合并为一个矩阵 `W [dim, 2*intermediate]`；
-2. 一次矩阵乘 `X @ W` 即可同时算出两个部分的结果；
+1. 把 gate 与 up_proj 两个权重矩阵合并为一个矩阵 W [dim, 2*intermediate]；
+2. 一次矩阵乘 X @ W 即可同时算出两个部分的结果；
 3. 对前一半列应用激活函数，再与后一半列**按位乘**。
 
-最终流程简化为 `down_proj(SiluAndMul(W, X))`。
+最终流程简化为 down_proj(SiluAndMul(W, X))。
 
 <!-- 插入图片 展示Swiglu的流程 -->
 
 假设有两块 GPU，下面分别看**行并行切分**与**列切分**两种方式。
 
-**方式一：行并行切分 `gate` / `up_proj`**
+**方式一：行并行切分 gate / up_proj**
 
-- **GPU0**：拿 `gate`、`up_proj` 的**前一半行**权重，拼接为 `W1 [dim/2, 2*intermediate]`；输入为匹配做**列切分**，取前一半列 `X1 [bs, seq_len, dim/2]`，计算 `X1 @ W1` → `[bs, seq_len, 2*intermediate]`。
-- **GPU1**：拿**后一半行**权重，拼接为 `W2 [dim/2, 2*intermediate]`；取输入后一半列 `X2 [bs, seq_len, dim/2]`，计算 `X2 @ W2` → `[bs, seq_len, 2*intermediate]`。
-- 两部分 **all-reduce 相加**后才是最终结果。⚠️ 不能直接使用 `SiluAndMul(W1, X1)`：SwiGlu 不是线性函数，`SwiGlu(X1@gate1 + X2@gate2) ≠ SwiGlu(X1@gate1) + SwiGlu(X2@gate2)`，因此**行并行切分会额外引入一次通信**，最终结果再送入 `down_proj`。
+- **GPU0**：拿 gate、up_proj 的**前一半行**权重，拼接为 W1 [dim/2, 2*intermediate]；输入为匹配做**列切分**，取前一半列 X1 [bs, seq_len, dim/2]，计算 X1 @ W1 → [bs, seq_len, 2*intermediate]。
+- **GPU1**：拿**后一半行**权重，拼接为 W2 [dim/2, 2*intermediate]；取输入后一半列 X2 [bs, seq_len, dim/2]，计算 X2 @ W2 → [bs, seq_len, 2*intermediate]。
+- 两部分 **all-reduce 相加**后才是最终结果。⚠️ 不能直接使用 SiluAndMul(W1, X1)：SwiGlu 不是线性函数，SwiGlu(X1@gate1 + X2@gate2) ≠ SwiGlu(X1@gate1) + SwiGlu(X2@gate2)，因此**行并行切分会额外引入一次通信**，最终结果再送入 down_proj。
 
-**方式二：列切分 `gate` / `up_proj`**
+**方式二：列切分 gate / up_proj**
 
-- **GPU0**：拿 `gate`、`up_proj` 的**前一半列** `[dim, intermediate/2]`，拼接出 `W1 [dim, intermediate]`，`X` 直接复制到该 GPU 上。因为列切分的结果无需相加、只需在对应维度拼接，可以直接使用 `SiluAndMul(W1, X)`。
+- **GPU0**：拿 gate、up_proj 的**前一半列** [dim, intermediate/2]，拼接出 W1 [dim, intermediate]，X 直接复制到该 GPU 上。因为列切分的结果无需相加、只需在对应维度拼接，可以直接使用 SiluAndMul(W1, X)。
 - **GPU1**：同理。
-- 得到两部分结果 `A1`、`A2` 后，对 `down_proj` 做**行切分**，两个 GPU 内分别对 `A1`、`A2` 做矩阵乘，最后结果再引入一次 **all-reduce 相加**。
-- 结论：列切分在送入 `down_proj` 前**无需额外引入通信**，效率更高。
+- 得到两部分结果 A1、A2 后，对 down_proj 做**行切分**，两个 GPU 内分别对 A1、A2 做矩阵乘，最后结果再引入一次 **all-reduce 相加**。
+- 结论：列切分在送入 down_proj 前**无需额外引入通信**，效率更高。
 
 ### 2. MHA 的 TP 切分
 
-MHA 的输入维度是 `[bs, seq_len, #head, head_dim]`，每个 head 独立计算 qkv，因此天然可以在 **head 维度**拆分：不同设备计算不同的 head。计算完每个 head 的 attention score 后需要经过 **out_proj** 线性层（与 dense 类似，可按行切分），最后再 **all-reduce 相加**汇总。计算示例如下：
+MHA 的输入维度是 [bs, seq_len, #head, head_dim]，每个 head 独立计算 qkv，因此天然可以在 **head 维度**拆分：不同设备计算不同的 head。计算完每个 head 的 attention score 后需要经过 **out_proj** 线性层（与 dense 类似，可按行切分），最后再 **all-reduce 相加**汇总。计算示例如下：
 
 ```python
 # tp_size为2的场景，GPU0上，其中hidden_dim = #head * head_dim
