@@ -29,6 +29,7 @@ Hexo 绘图插件：在文章中用标签生成技术示意图，风格仿
 | --- | --- | --- |
 | `mem` | GPU 内存层级图（寄存器 / 共享内存 / L2 / DRAM） | `title=自定义标题` |
 | `tile` | 矩阵分块图（Block Tiling） | `m=4 n=4 k=4 tm=2 tn=2` |
+| `ffn` | FFN（SwiGLU）结构图：X / gate / up_proj / down_proj / ⊗ | `title=自定义标题` |
 
 ## 工作方式
 

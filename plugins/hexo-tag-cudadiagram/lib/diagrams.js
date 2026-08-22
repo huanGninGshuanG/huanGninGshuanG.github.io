@@ -125,6 +125,76 @@ function matrixTiling(opts) {
     return { svg: svgStr, xml, name, width: W, height: H };
 }
 
+/* ===================== 3. FFN（SwiGLU）结构图 ===================== */
+
+function ffnDiagram(opts) {
+    const W = 840, H = 520;
+    const title = opts.title || 'FFN（SwiGLU）结构';
+    const formula = 'down_proj( SwiGlu(gate(X)) · up_proj(X) )';
+    const X = { x: 30, y: 210, w: 150, h: 80, fill: style.palette[0] };        // 蓝
+    const gate = { x: 250, y: 100, w: 180, h: 70, fill: style.palette[1] };   // 橙
+    const swiglu = { x: 480, y: 100, w: 140, h: 70, fill: style.palette[2] }; // 紫
+    const up = { x: 250, y: 290, w: 180, h: 70, fill: style.palette[3] };     // 青
+    const mul = { x: 576, y: 216, r: 34, fill: style.palette[4] };            // 黄 ⊗
+    const down = { x: 480, y: 380, w: 200, h: 70, fill: style.palette[5] };   // 绿
+    const out = { x: 720, y: 380, w: 100, h: 70, fill: '#d9d9d9' };           // 灰
+
+    let inner = '';
+    inner += svg.text(W / 2, 36, title, { size: 20, bold: true });
+    inner += svg.text(W / 2, 62, formula, { size: 13 });
+
+    function box(b, name, dim) {
+        let s = svg.rect(b.x, b.y, b.w, b.h, { fill: b.fill, rx: 10 });
+        s += svg.text(b.x + b.w / 2, b.y + 28, name, { size: 15, bold: true });
+        s += svg.text(b.x + b.w / 2, b.y + 52, dim, { size: 12 });
+        return s;
+    }
+    inner += box(X, 'X', '[bs, seq_len, dim]');
+    inner += box(gate, 'gate 门控', '[intermediate, dim]');
+    inner += box(swiglu, 'SwiGlu', '激活函数');
+    inner += box(up, 'up_proj', '[intermediate, dim]');
+    inner += box(down, 'down_proj', '[dim, intermediate]');
+    inner += box(out, '输出', '[bs, seq_len, dim]');
+    // 逐元素相乘 ⊗
+    inner += '<circle cx="' + mul.x + '" cy="' + mul.y + '" r="' + mul.r + '" fill="' + mul.fill
+        + '" stroke="' + style.stroke + '" stroke-width="2"/>';
+    inner += svg.text(mul.x, mul.y + 5, '⊗', { size: 22, bold: true });
+    // 箭头
+    inner += svg.arrow(X.x + X.w + 4, X.y + 18, gate.x - 4, gate.y + 32, { sw: 2.5 });
+    inner += svg.arrow(X.x + X.w + 4, X.y + X.h - 18, up.x - 4, up.y + 32, { sw: 2.5 });
+    inner += svg.arrow(gate.x + gate.w, gate.y + gate.h / 2, swiglu.x, swiglu.y + gate.h / 2, { sw: 2.5 });
+    inner += svg.arrow(swiglu.x + swiglu.w / 2, swiglu.y + swiglu.h, mul.x - 12, mul.y - 6, { sw: 2.5 });
+    inner += svg.arrow(up.x + up.w, up.y + up.h / 2 + 6, mul.x - 12, mul.y + 10, { sw: 2.5 });
+    inner += svg.arrow(mul.x + 8, mul.y + 18, down.x + down.w / 2 - 20, down.y - 4, { sw: 2.5 });
+    inner += svg.arrow(down.x + down.w, down.y + down.h / 2, out.x, out.y + down.h / 2, { sw: 2.5 });
+    // 表达式标注
+    inner += svg.text(515, 205, 'SwiGlu(gate(X))', { size: 11, fill: style.palette[2] });
+    inner += svg.text(455, 296, 'up_proj(X)', { size: 11, fill: style.palette[3] });
+    const svgStr = svg.svgDoc(W, H, inner);
+
+    // drawio 版本
+    const g = d.create();
+    d.vertex(g, 'title', title, d.textStyle(18), 160, 16, 520, 30);
+    d.vertex(g, 'formula', formula, d.textStyle(13), 160, 50, 520, 24);
+    d.vertex(g, 'x', 'X\n[bs, seq_len, dim]', d.roundedStyle(X.fill, { fontSize: 14 }), X.x, X.y, X.w, X.h);
+    d.vertex(g, 'gate', 'gate 门控\n[intermediate, dim]', d.roundedStyle(gate.fill, { fontSize: 14 }), gate.x, gate.y, gate.w, gate.h);
+    d.vertex(g, 'swiglu', 'SwiGlu\n激活函数', d.roundedStyle(swiglu.fill, { fontSize: 14 }), swiglu.x, swiglu.y, swiglu.w, swiglu.h);
+    d.vertex(g, 'up', 'up_proj\n[intermediate, dim]', d.roundedStyle(up.fill, { fontSize: 14 }), up.x, up.y, up.w, up.h);
+    d.vertex(g, 'mul', '⊗', 'ellipse;whiteSpace=wrap;html=0;fillColor=' + mul.fill + ';strokeColor=#000000;strokeWidth=2;fontSize=20;', mul.x - mul.r, mul.y - mul.r, mul.r * 2, mul.r * 2);
+    d.vertex(g, 'down', 'down_proj\n[dim, intermediate]', d.roundedStyle(down.fill, { fontSize: 14 }), down.x, down.y, down.w, down.h);
+    d.vertex(g, 'out', '输出\n[bs, seq_len, dim]', d.roundedStyle(out.fill, { fontSize: 14 }), out.x, out.y, out.w, out.h);
+    d.edge(g, 'e1', 'x', 'gate', d.edgeStyle());
+    d.edge(g, 'e2', 'x', 'up', d.edgeStyle());
+    d.edge(g, 'e3', 'gate', 'swiglu', d.edgeStyle());
+    d.edge(g, 'e4', 'swiglu', 'mul', d.edgeStyle(), 'SwiGlu(gate(X))');
+    d.edge(g, 'e5', 'up', 'mul', d.edgeStyle(), 'up_proj(X)');
+    d.edge(g, 'e6', 'mul', 'down', d.edgeStyle());
+    d.edge(g, 'e7', 'down', 'out', d.edgeStyle());
+    const xml = d.toString(g, 'ffn');
+
+    return { svg: svgStr, xml, name: 'ffn', width: W, height: H };
+}
+
 /* ===================== 入口 ===================== */
 
 function intOpt(v, def) {
@@ -135,7 +205,8 @@ function intOpt(v, def) {
 function build(type, opts) {
     if (type === 'mem') return memoryHierarchy(opts);
     if (type === 'tile') return matrixTiling(opts);
-    throw new Error('cudadiagram: 未知图形类型 "' + type + '"（支持 mem / tile）');
+    if (type === 'ffn') return ffnDiagram(opts);
+    throw new Error('cudadiagram: 未知图形类型 "' + type + '"（支持 mem / tile / ffn）');
 }
 
 module.exports = { build };

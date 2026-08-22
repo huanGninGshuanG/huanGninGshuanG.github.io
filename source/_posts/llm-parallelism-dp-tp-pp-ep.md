@@ -42,15 +42,18 @@ categories:
 
 ### 1. FFN的TP切分
 
-FFN中的基本结构如下图，其基本计算为`down_proj(SwiGlu(gate(X))*up_proj(X))`，其中：
+FFN中的基本结构如下图，其基本计算为`down_proj(SwiGlu(gate(X))*up_proj(X))`，其中各个部分含义如下：
 
 | 名称 | 含义 | 维度 |
 | --- | --- | --- |
 | X | Attention的输出 | [bs, seq_len, dim] |
-| gate | 门控的dense权重 | [intermidiate, dim] |
+| gate | 门控的dense权重 | [intermediate, dim] |
+| SwiGlu | 激活函数，缩放up_proj中提取的特征 | 函数，对输入矩阵逐一运算 |
+| up_proj | 提取输入特征 | [intermediate, dim] |
+| down_proj | 保持FFN输出维度与输入维度一致 | [dim, intermediate] |
 
 
-![FFN](/img/image.png)
+{% cudadiagram ffn %}
 
 ### 2. MHA的TP切分
 
