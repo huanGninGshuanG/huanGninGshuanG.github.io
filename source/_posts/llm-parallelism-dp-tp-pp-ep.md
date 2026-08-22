@@ -154,7 +154,7 @@ res = out_proj1(context)
 
 ## 四、EP：专家并行
 
-**思路**：专门针对 **MoE（Mixture-of-Experts）** 模型。MoE 把 FFN 层替换成多个「专家」（expert），每个 token 由**门控网络（Router）**挑选 top-k 个专家来计算。EP 就是把众多专家**分布到不同的 GPU** 上，每个专家只处理被路由给它的 token。pytorch中moe forward部分代码如下：
+**思路**：专门针对 **MoE（Mixture-of-Experts）** 模型。MoE 把 FFN 层替换成多个「专家」（expert），每个 token 由**门控网络（Router）**挑选 top-k 个专家来计算，每一个专家就是之前的 FFN。EP 就是把众多专家**分布到不同的 GPU** 上，每个专家只处理被路由给它的 token。大模型中的大部分参数来自于moe结构，通过这个结构既保留了训练时模型的探索能力，又在推理时只选择topk个专家从而节省了算力。pytorch中moe forward部分代码如下：
 ```python
 # x: (batch, seq_len, emb_dim)
 scores = self.gate(x)  # (b, seq_len, num_experts)
@@ -201,7 +201,10 @@ for expert_id_tensor in unique_experts:
     # weighted sum
     out_flat.index_add_(0, selected_idx, expert_out * selected_probs.unsqueeze(-1))
 ```
-
+<figure style="text-align:center;margin:1.5em auto;">
+  <img src="/img/moe.png" alt="MoE 结构示意" style="display:block;margin:0 auto;max-width:100%;height:auto;">
+  <figcaption style="text-align:center;color:#666;font-size:0.9em;margin-top:0.5em;">图：MoE 结构示意</figcaption>
+</figure>
 
 **特点**：
 
