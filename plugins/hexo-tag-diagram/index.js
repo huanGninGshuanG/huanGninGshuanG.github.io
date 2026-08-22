@@ -1,6 +1,6 @@
 /* global hexo */
 /**
- * hexo-tag-cudadiagram
+ * hexo-tag-diagram
  *
  * 博客写作用的绘图插件：在文章里用标签生成技术示意图，
  * 风格仿 siboehm.com 的 CUDA-MMM 文章（白底 + 黑色描边 + 高饱和色块），
@@ -8,8 +8,8 @@
  * .drawio 文件，可在线编辑后导出回 SVG。
  *
  * 用法（文章 Markdown 中）：
- *   {% cudadiagram mem %}
- *   {% cudadiagram tile m=4 n=4 k=4 tm=2 tn=2 %}
+ *   {% diagram mem %}
+ *   {% diagram tile m=4 n=4 k=4 tm=2 tn=2 %}
  *
  * 插件在生成时：
  *   1. 渲染内联 SVG（就是文章里显示的图）
@@ -24,7 +24,7 @@ const { build } = require('./lib/diagrams');
 
 const usedDiagrams = {}; // name -> xml
 
-hexo.extend.tag.register('cudadiagram', args => {
+hexo.extend.tag.register('diagram', args => {
     const type = (args[0] || 'mem').toLowerCase();
     const opts = {};
     for (let i = 1; i < args.length; i++) {

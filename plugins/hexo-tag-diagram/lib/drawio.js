@@ -40,7 +40,7 @@ function edgeStyle(color) {
 }
 
 function toString(g, name) {
-    let s = '<mxfile host="app.diagrams.net" agent="hexo-tag-cudadiagram" version="26.0.0">'
+    let s = '<mxfile host="app.diagrams.net" agent="hexo-tag-diagram" version="26.0.0">'
         + '<diagram id="' + esc(name) + '" name="' + esc(name) + '">'
         + '<mxGraphModel dx="900" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" '
         + 'arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="900" math="0" shadow="0">'

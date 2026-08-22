@@ -1,4 +1,4 @@
-# hexo-tag-cudadiagram
+# hexo-tag-diagram
 
 Hexo 绘图插件：在文章中用标签生成技术示意图，风格仿
 [siboehm.com 的 CUDA-MMM 文章](https://siboehm.com/articles/22/CUDA-MMM)
@@ -10,19 +10,19 @@ Hexo 绘图插件：在文章中用标签生成技术示意图，风格仿
 站点 `package.json` 中已包含：
 
 ```json
-"hexo-tag-cudadiagram": "file:plugins/hexo-tag-cudadiagram"
+"hexo-tag-diagram": "file:plugins/hexo-tag-diagram"
 ```
 
-插件代码位于 `plugins/hexo-tag-cudadiagram/`。
+插件代码位于 `plugins/hexo-tag-diagram/`。
 
 ## 用法
 
 文章 Markdown 中：
 
 ```
-{% cudadiagram mem %}
+{% diagram mem %}
 
-{% cudadiagram tile m=4 n=4 k=4 tm=2 tn=2 %}
+{% diagram tile m=4 n=4 k=4 tm=2 tn=2 %}
 ```
 
 | 类型 | 说明 | 参数 |

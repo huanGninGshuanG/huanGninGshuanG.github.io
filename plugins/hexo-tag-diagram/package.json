@@ -1,5 +1,5 @@
 {
-  "name": "hexo-tag-cudadiagram",
+  "name": "hexo-tag-diagram",
   "version": "1.0.0",
   "description": "Hexo tag plugin: render technical diagrams (GPU memory hierarchy, matrix block tiling) in the siboehm CUDA-MMM style, with an online edit link to app.diagrams.net",
   "main": "index.js",

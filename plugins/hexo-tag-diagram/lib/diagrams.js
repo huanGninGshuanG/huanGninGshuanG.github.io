@@ -26,7 +26,7 @@ function memoryHierarchy(opts) {
     inner += svg.text(96, y0 + 3 * (bh + gap) + 52, '慢 · 大', { size: 13, anchor: 'end' });
     for (let i = 0; i < levels.length; i++) {
         const y = y0 + i * (bh + gap);
-        inner += svg.rect(bx, y, bw, bh, { fill: levels[i].color, rx: 10 });
+        inner += svg.rect(bx, y, bw, bh, { fill: '#ffffff', rx: 10 });
         inner += svg.text(bx + bw / 2, y + 32, levels[i].name, { size: 17, bold: true });
         inner += svg.text(bx + bw / 2, y + 56, levels[i].sub, { size: 12.5 });
         if (i < levels.length - 1) {
@@ -45,7 +45,7 @@ function memoryHierarchy(opts) {
     for (let i = 0; i < levels.length; i++) {
         const y = y0 + i * (bh + gap);
         d.vertex(g, 'lvl' + i, levels[i].name + '\n' + levels[i].sub,
-            d.roundedStyle(levels[i].color, { fontSize: 14 }), bx, y, bw, bh);
+            d.roundedStyle('#ffffff', { fontSize: 14 }), bx, y, bw, bh);
         if (i < levels.length - 1) {
             d.edge(g, 'arr' + i, 'lvl' + i, 'lvl' + (i + 1), d.edgeStyle());
         }
@@ -88,10 +88,10 @@ function matrixTiling(opts) {
     inner += grid(A); inner += svg.text(A.x + (K * pitch) / 2, A.y - 14, 'A：M×K', { size: 15, bold: true });
     inner += grid(B); inner += svg.text(B.x + (N * pitch) / 2, B.y - 14, 'B：K×N', { size: 15, bold: true });
     inner += grid(C); inner += svg.text(C.x + (N * pitch) / 2, C.y - 14, 'C：M×N', { size: 15, bold: true });
-    // tile 高亮
-    inner += svg.rect(A.x, A.y, tm * pitch - 2, tm * pitch - 2, { fill: colBlue, opacity: 0.85 });
-    inner += svg.rect(B.x, B.y, tn * pitch - 2, tm * pitch - 2, { fill: colOrange, opacity: 0.85 });
-    inner += svg.rect(C.x, C.y, tn * pitch - 2, tm * pitch - 2, { fill: colPurple, opacity: 0.85 });
+    // tile 高亮：白底 + 彩色粗描边（保留颜色语义，无背景填充）
+    inner += svg.rect(A.x, A.y, tm * pitch - 2, tm * pitch - 2, { fill: '#ffffff', stroke: colBlue, sw: 3.5 });
+    inner += svg.rect(B.x, B.y, tn * pitch - 2, tm * pitch - 2, { fill: '#ffffff', stroke: colOrange, sw: 3.5 });
+    inner += svg.rect(C.x, C.y, tn * pitch - 2, tm * pitch - 2, { fill: '#ffffff', stroke: colPurple, sw: 3.5 });
     // 箭头：A tile → C tile，B tile → C tile
     inner += svg.arrow(A.x + K * pitch + 6, A.y + tm * pitch / 2, C.x - 6, C.y + tm * pitch / 2, { stroke: colBlue, sw: 2.5 });
     inner += svg.arrow(B.x + 4, B.y + tm * pitch + 6, C.x + N * pitch - 4, C.y - 6, { stroke: colOrange, sw: 2.5 });
@@ -114,9 +114,10 @@ function matrixTiling(opts) {
             }
         }
     }
-    d.vertex(g, 'atile', 'A tile', d.roundedStyle(colBlue, { fontSize: 11 }), A.x, A.y, tm * pitch - 2, tm * pitch - 2);
-    d.vertex(g, 'btile', 'B tile', d.roundedStyle(colOrange, { fontSize: 11 }), B.x, B.y, tn * pitch - 2, tm * pitch - 2);
-    d.vertex(g, 'ctile', 'C tile', d.roundedStyle(colPurple, { fontSize: 11 }), C.x, C.y, tn * pitch - 2, tm * pitch - 2);
+    const tileStyle = c => 'rounded=1;whiteSpace=wrap;html=0;fillColor=#ffffff;strokeColor=' + c + ';strokeWidth=3;fontSize=11;fontStyle=1;';
+    d.vertex(g, 'atile', 'A tile', tileStyle(colBlue), A.x, A.y, tm * pitch - 2, tm * pitch - 2);
+    d.vertex(g, 'btile', 'B tile', tileStyle(colOrange), B.x, B.y, tn * pitch - 2, tm * pitch - 2);
+    d.vertex(g, 'ctile', 'C tile', tileStyle(colPurple), C.x, C.y, tn * pitch - 2, tm * pitch - 2);
     d.edge(g, 'e1', 'atile', 'ctile', d.edgeStyle(colBlue), 'A 的 tile');
     d.edge(g, 'e2', 'btile', 'ctile', d.edgeStyle(colOrange), 'B 的 tile');
     const name = 'tile-' + M + '-' + N + '-' + K + '-' + tm + '-' + tn;
@@ -131,13 +132,13 @@ function ffnDiagram(opts) {
     const W = 840, H = 520;
     const title = opts.title || 'FFN（SwiGLU）结构';
     const formula = 'down_proj( SwiGlu(gate(X)) · up_proj(X) )';
-    const X = { x: 30, y: 210, w: 150, h: 80, fill: style.palette[0] };        // 蓝
-    const gate = { x: 250, y: 100, w: 180, h: 70, fill: style.palette[1] };   // 橙
-    const swiglu = { x: 480, y: 100, w: 140, h: 70, fill: style.palette[2] }; // 紫
-    const up = { x: 250, y: 290, w: 180, h: 70, fill: style.palette[3] };     // 青
-    const mul = { x: 576, y: 216, r: 34, fill: style.palette[4] };            // 黄 ⊗
-    const down = { x: 480, y: 380, w: 200, h: 70, fill: style.palette[5] };   // 绿
-    const out = { x: 720, y: 380, w: 100, h: 70, fill: '#d9d9d9' };           // 灰
+    const X = { x: 30, y: 210, w: 150, h: 80, fill: '#ffffff' };
+    const gate = { x: 250, y: 100, w: 180, h: 70, fill: '#ffffff' };
+    const swiglu = { x: 480, y: 100, w: 140, h: 70, fill: '#ffffff' };
+    const up = { x: 250, y: 290, w: 180, h: 70, fill: '#ffffff' };
+    const mul = { x: 576, y: 216, r: 34, fill: '#ffffff' };
+    const down = { x: 480, y: 380, w: 200, h: 70, fill: '#ffffff' };
+    const out = { x: 720, y: 380, w: 100, h: 70, fill: '#ffffff' };
 
     let inner = '';
     inner += svg.text(W / 2, 36, title, { size: 20, bold: true });
@@ -206,7 +207,7 @@ function build(type, opts) {
     if (type === 'mem') return memoryHierarchy(opts);
     if (type === 'tile') return matrixTiling(opts);
     if (type === 'ffn') return ffnDiagram(opts);
-    throw new Error('cudadiagram: 未知图形类型 "' + type + '"（支持 mem / tile / ffn）');
+    throw new Error('diagram: 未知图形类型 "' + type + '"（支持 mem / tile / ffn）');
 }
 
 module.exports = { build };

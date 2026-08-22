@@ -53,7 +53,7 @@ FFN中的基本结构如下图，其基本计算为`down_proj(SwiGlu(gate(X))*up
 | down_proj | 保持FFN输出维度与输入维度一致 | [dim, intermediate] |
 
 
-{% cudadiagram ffn %}
+{% diagram ffn %}
 
 ### 2. MHA的TP切分
 
