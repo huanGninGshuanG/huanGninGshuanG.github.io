@@ -22,10 +22,40 @@ categories:
 
 
 ## 预备：常见通信原语
-1. reduce-scatter: 
-2. all-gather:
-3. all-reduce:
-4. all-to-all
+
+分布式训练 / 推理中，数据需要在多个 GPU 之间按固定的**集合通信（Collective Communication）**模式交换。下面四个是基础原语，后续各并行策略都会用到（P 为参与通信的 GPU 数，V 为每张卡的数据量）。
+
+**1. Reduce-Scatter（归约-分散）**
+
+- 每张卡把自己的数据分成 P 份，把第 i 份发送给第 i 张卡；同时接收其他卡发来的对应份，做**逐元素归约**（通常为求和，也可为求最大 / 最小）。
+- 结束时：每张卡持有**其中一份数据的全局归约结果**（含本地份额）。
+- 通信量约 (P−1)/P × 全体数据量，环形（Ring）实现下与 GPU 数弱相关。
+- 典型用途：Ring AllReduce 的前半段、ZeRO 的梯度分片。
+
+**2. All-Gather（全收集）**
+
+- Reduce-Scatter 的**逆操作**：每张卡把自己持有的数据分片发给所有卡，最终**每张卡都拥有完整数据**（全体分片拼接，共 P·V）。
+- 典型用途：TP 行并行 / 列并行的结果拼接、ZeRO 的权重恢复。
+
+**3. All-Reduce（全归约）**
+
+- 每张卡都得到**全体数据的归约结果**（如所有卡对应元素求和）。
+- 标准实现 = Reduce-Scatter + All-Gather 两步（Ring AllReduce 正是这个结构），通信量约为 Reduce-Scatter 的两倍。
+- 典型用途：DP 的梯度同步、TP 计算结果的合并。
+
+**4. All-to-All（全交换）**
+
+- 比前三个更通用：每张卡向**其他每一张卡**发送互不相同的数据，同时接收来自各卡的数据。
+- 典型用途：MoE 的 token 路由（EP 通信）、序列并行、部分 Attention 实现。
+
+四个原语的对比小结：
+
+| 原语 | 输入（每卡） | 输出（每卡） | 典型用途 |
+| --- | --- | --- | --- |
+| reduce-scatter | 数据 V | 其中 1 份的全局归约结果 | Ring AllReduce 前半段、ZeRO 分片 |
+| all-gather | 数据分片 V/P | 完整数据 P·V | TP 结果拼接、ZeRO 恢复 |
+| all-reduce | 数据 V | 全体数据的归约结果 | DP 梯度同步、TP 合并 |
+| all-to-all | 发给各卡的不同数据 | 各卡发来的数据 | MoE token 路由、序列并行 |
 
 ## 一、DP：数据并行
 
@@ -124,7 +154,7 @@ res = out_proj1(context)
 
 ## 四、EP：专家并行
 
-**思路**：专门针对 **MoE（Mixture-of-Experts）** 模型。MoE 把 FFN 层替换成多个「专家」（expert），每个 token 由**门控网络（Router）**挑选 top-k 个专家来计算。EP 就是把众多专家**分布到不同的 GPU** 上，每个专家只处理被路由给它的 token。一个使用pytorch实现的简单MOE代码如下：
+**思路**：专门针对 **MoE（Mixture-of-Experts）** 模型。MoE 把 FFN 层替换成多个「专家」（expert），每个 token 由**门控网络（Router）**挑选 top-k 个专家来计算。EP 就是把众多专家**分布到不同的 GPU** 上，每个专家只处理被路由给它的 token。pytorch中moe forward部分代码如下：
 ```python
 # x: (batch, seq_len, emb_dim)
 scores = self.gate(x)  # (b, seq_len, num_experts)
