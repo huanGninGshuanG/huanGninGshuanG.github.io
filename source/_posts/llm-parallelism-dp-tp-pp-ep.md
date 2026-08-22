@@ -1,53 +1,58 @@
 ---
-title: 大模型并行策略详解：DP / TP / PP / EP 及其组合
+title: 大模型推理中常见的并行策略
 date: 2026-08-18 22:44:00
 updated: 2026-08-18 22:44:00
 tags:
-  - 大模型
-  - 分布式训练
+  - 分布式推理
   - 并行策略
-  - MoE
 categories:
-  - 技术
+  - LLM
 ---
 
-大模型的参数动辄几十亿、上千亿，单张 GPU 既放不下参数，也算不动。于是需要把「模型」和「数据」拆开，分到成百上千张 GPU 上协同计算 —— 这就是**分布式并行**。围绕「切什么、怎么通信」，业界沉淀出四种基本并行策略：
+主流大模型的参数基本上都几百B，甚至Kimi K3达到了2.8T，单张 GPU 既放不下参数，也算不动。于是需要把「模型」和「数据」拆开，分到成百上千张 GPU 上协同计算 —— 这就是**分布式并行**。围绕「切什么、怎么通信」，大致上有四种基本并行策略，常见的推理框架还会有CP(context parallel)等切分方式。
 
-| 缩写 | 全称 | 切分对象 |
+| 缩写 | 全称 | 如何切分 |
 | --- | --- | --- |
-| **DP** | Data Parallelism，数据并行 | 数据 batch |
-| **TP** | Tensor Parallelism，张量并行 | 层内的权重 / 激活（算子内部） |
-| **PP** | Pipeline Parallelism，流水线并行 | 层（网络深度） |
-| **EP** | Expert Parallelism，专家并行 | MoE 模型中的专家（expert） |
+| **DP** | Data Parallelism，数据并行 | 按照BATCH切分给多个副本 |
+| **TP** | Tensor Parallelism，张量并行 | 权重切分给TP组内的多个GPU |
+| **PP** | Pipeline Parallelism，流水线并行 | 多个layer按层切分给不同GPU |
+| **EP** | Expert Parallelism，专家并行 | MoE 中按照专家维度切分到多个GPU |
 
 下面逐个介绍，最后给出它们的组合方式与示意图。
 
-<!-- more -->
+
+## 一、常见通信原语
+1. reduce-scatter: 
+2. all-gather:
+3. all-reduce:
+4. all-to-all
 
 ## 一、DP：数据并行
 
-**思路**：每张卡（或每组卡）持有一份**完整的模型副本**，把输入数据按 batch 维度切成 N 份分给 N 个副本。各副本独立完成前向、反向，算出各自的梯度后，通过 **AllReduce** 把梯度汇总并同步，保证所有副本参数一致。
+**思路**：每张卡（或每个DP组）持有一份**完整的模型副本**，把输入数据按 batch 维度切成 N 份分给 N 个副本，各副本独立完成前向计算。
 
 **特点**：
 
-- 实现最简单，扩展性最好，可以从几卡一直扩到几千卡。
+- 实现最简单，扩展性最好，可以横向扩展吞吐量。
 - **不降低单卡显存**：每张卡仍要放下完整模型，所以显存不够时不能只靠 DP。
-- 通信开销与**模型大小成正比**（每步都要同步全部梯度），模型越大通信越重。
-- 变体：DeepSpeed **ZeRO**（Zero Redundancy Optimizer）把优化器状态、梯度、参数分片存储，本质是「显存优化的 DP」，通信量略增但显存占用大幅下降。
 
 ## 二、TP：张量并行
 
-**思路**：把**同一个算子**的计算切到多张卡上。以 Transformer 的 MLP 层为例（Megatron-LM 的做法）：
+**思路**：把权重切分到多个GPU上，因此每个GPU只跑该算子的部分计算，计算完成后需要通过**all-reduce**进行合并多个gpu的计算结果。大模型中有两类核心的模块`Attention`和`FFN`，下面以VLLM中的实现简单介绍一下这两个模块如何进行切分与计算。
 
-- 第一个线性层（`X·W1`）把权重 **按列切分**：`W1 = [W1_a | W1_b]`，两张卡各算一半输出；
-- 第二个线性层（`Y·W2`）把权重 **按行切分**，把两卡的部分结果拼接回来。
+### 1. FFN的TP切分
 
-Attention 的 QKV 投影按列切、输出投影按行切，同理。切分边界上的张量通过 **AllReduce** 汇聚，因此**每个 Transformer 层需要两次 AllReduce**（前向的 f 和 g 边界各一次）。
+FFN中的基本结构如下图，其基本计算为`down_proj(SwiGlu(gate(X))*up_proj(X))`，其中：
 
-**特点**：
+| 名称 | 含义 | 维度 |
+| --- | --- | --- |
+| X | Attention的输出 | [bs, seq_len, dim] |
+| gate | 门控的dense权重 | [intermidiate, dim] |
 
-- 同时切分**参数和激活**，能显著降低每卡显存，是训练超大规模稠密模型的基础。
-- 通信**频率极高、数据量大**（每层两次 AllReduce），严重依赖卡间带宽，一般只用在高带宽的**单机内（NVLink / 同构互联）**，TP 维度通常不超过单机卡数（4~8）。
+
+![FFN](/img/image.png)
+
+### 2. MHA的TP切分
 
 ## 三、PP：流水线并行
 
@@ -104,63 +109,8 @@ Attention 的 QKV 投影按列切、输出投影按行切，同理。切分边�
 
 对于 MoE 模型，每个 stage 里的专家层再按 **EP** 切分（Mermaid 示意图）：
 
-{% mermaid %}
-flowchart LR
-    subgraph TOK["输入 Token"]
-        T1["Token 1"]
-        T2["Token 2"]
-        T3["Token 3"]
-        T4["Token 4"]
-        T5["Token 5"]
-        T6["Token 6"]
-    end
-    R(["门控网络 Router · top-k"])
-    subgraph EXP["EP 组：8 张卡（每卡承载一个专家）"]
-        E1["GPU1 · E1"]
-        E2["GPU2 · E2"]
-        E3["GPU3 · E3"]
-        E4["GPU4 · E4"]
-        E5["GPU5 · E5"]
-        E6["GPU6 · E6"]
-        E7["GPU7 · E7"]
-        E8["GPU8 · E8"]
-    end
-    T1 --> R
-    T2 --> R
-    T3 --> R
-    T4 --> R
-    T5 --> R
-    T6 --> R
-    R --> E1
-    R --> E2
-    R --> E3
-    R --> E4
-    R --> E5
-    R --> E6
-    R --> E7
-    R --> E8
-    linkStyle 0,1,2,3,4,5 stroke:#8a8a8a,stroke-width:1.5
-    linkStyle 6,7,8,9,10,11,12,13 stroke:#4a7fb5,stroke-width:2
-{% endmermaid %}
-
 图中每个 Token 先经门控网络挑选 top-k 个专家（示意 k 覆盖全部专家，实际通常 k=1~8），再被路由到对应专家所在的卡计算；专家层通信为 All-to-All 的 token 交换。
 
 以 DeepSeek-V3 / Mixtral 这类模型为例，常见组合为 **TP × PP × EP × DP**：节点内先做 TP（张量并行）再叠 EP（专家并行），节点间用 PP 串流水线，最外层 DP 复制多份。EP 与 DP 的区别要分清：DP 的每个副本都有**完整模型**；EP 则是每张卡只有**部分专家**。
-
-### 组合全景
-
-| 维度 | 切什么 | 通信 | 典型部署位置 |
-| --- | --- | --- | --- |
-| TP | 层内权重 / 激活 | 每层 2 次 AllReduce，量大频高 | 单机内（NVLink） |
-| EP | MoE 专家 | All-to-All（token 交换） | 节点内 / 相邻节点 |
-| PP | 层（深度） | 段间激活，量小 | 跨节点 |
-| DP | 数据 batch | 每步一次梯度 AllReduce（量≈模型大小） | 全局 |
-
-## 总结
-
-- **DP** 复制模型、扩展数据，简单但省不了显存；
-- **TP** 切算子权重，最吃带宽，只能放节点内；
-- **PP** 按层流水线，省显存、能跨节点，但有气泡开销；
-- **EP** 为 MoE 而生，把专家摊到多卡，换来 All-to-All 通信与负载均衡问题。
 
 实际框架（Megatron-LM、DeepSpeed、vLLM、SGLang 等）都支持任意组合，选型时把握一条主线即可：**把通信最密集的 TP/EP 放在带宽最高的地方，PP 串节点、DP 铺全局**，并根据显存、算力、网络带宽做权衡。
